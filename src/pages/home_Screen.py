@@ -2,8 +2,23 @@ import pygame as pg
 import os
 from src.color.cores import colors
 import math
-from src.settings.setting import angle, bullet_x, bullet_y, dx, dy, width, height, bullet_speed, x, y, speed, speed_balls, image_x, interval, image_y
 import random
+from src.settings.setting import (
+    angle, 
+    position_x, 
+    position_y, 
+    width, 
+    height, 
+    bullet_speed,
+    speed, 
+    speed_balls, 
+    image_x, 
+    interval, 
+    image_y,
+    ray
+)
+from src.pages.ball import BallGame
+from src.pages.bullet import BulletGame
 
 pg.init()
 screen = pg.display.set_mode((width, height))
@@ -32,9 +47,7 @@ pg.mixer.music.play(-1)
 shooting = False
 last_time = pg.time.get_ticks()
 balls = []
-
-def little_balls(screen, color, position, ray):
-    pg.draw.circle(screen, color, position, ray)
+bullets  = []
 
 running = True
 
@@ -48,8 +61,8 @@ while running:
 
         if event.type == pg.KEYDOWN:
             if event.key == pg.K_SPACE:
-                bullet_x = x + 100
-                bullet_y = y
+                bullet_x = position_x + 100
+                bullet_y = position_y
 
                 if current_image == rotation_image:
                     angle = 60
@@ -61,53 +74,53 @@ while running:
                 dx = bullet_speed * math.cos(rad)
                 dy = -bullet_speed * math.sin(rad)
 
-                shooting = True
+                bullets.append(BulletGame(screen, colors['Vermelho'], position_x + 100, position_y, dx, dy, ray))
                 shoot_sound.play(maxtime=50)
 
     keyboard = pg.key.get_pressed()
 
     if keyboard[pg.K_RIGHT]:
         current_image = rotation_image
-        x += speed
+        position_x += speed
         move_sound.play(maxtime=50)
     if keyboard[pg.K_LEFT]:
         current_image = pg.transform.flip(rotation_image, True, False)
-        x -= speed
+        position_x -= speed
         move_sound.play(maxtime=50)
 
-    if x < 0:
-        x = 0
+    if position_x < 0:
+        position_x = 0
 
-    if x > width - width_img:
-        x = width - width_img
+    if position_x > width - width_img:
+        position_x = width - width_img
 
     screen.blit(bg_imagem, (0, 0))
 
-    screen.blit(current_image, (x, y))
-
-    if current_time - last_time > interval:
-        balls.append([width, random.randint(0, height-350)])
-        last_time = current_time
+    screen.blit(current_image, (position_x, position_y))
     
-    for ball in balls:
-        ball[0] -= speed_balls
+    
+    if current_time - last_time > interval:
+        balls.append(BallGame(screen, colors['RosaClaro'], (width, random.randint(0, height-350)), 8))
+        last_time = current_time
 
     for ball in balls:
-        little_balls(screen, colors['RosaClaro'], (int(ball[0]), int(ball[1])), 8)
+        ball.move_balls(speed_balls)
+        ball.draw_balls()
 
-    if shooting:
-        bullet_x += dx
-        bullet_y += dy
-        pg.draw.circle(screen, colors['Vermelho'], (int(bullet_x), int(bullet_y)), 8)
+    for bullet in bullets[:]:
+        bullet.move_bullet()
+        bullet.draw_bullet()
 
-        if bullet_x > width or bullet_y < 0:
-            shooting = False
+        if bullet.is_off_screen(width, height):
+            bullets.remove(bullet)
 
-    for ball in balls[:]:
-        if abs(bullet_x - ball[0]) < 30 and abs(bullet_y - ball[1]) < 30:
-            balls.remove(ball)
-            collision_sound.play()
-            shooting = False
+    for bullet in bullets[:]:
+        for ball in balls[:]:
+            if bullet.collide(ball):
+                balls.remove(ball)
+                bullets.remove(bullet)
+                collision_sound.play()
+                break
 
     pg.display.flip()
 
