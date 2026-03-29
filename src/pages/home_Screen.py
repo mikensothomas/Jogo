@@ -2,7 +2,7 @@ import pygame as pg
 import os
 from src.color.cores import colors
 import math
-from src.settings.setting import angle, bullet_x, bullet_y, dx, dy, width, height, bullet_speed, x, y, speed, position_x, position_y, speed_balls, image_x, interval, image_y
+from src.settings.setting import angle, bullet_x, bullet_y, dx, dy, width, height, bullet_speed, x, y, speed, speed_balls, image_x, interval, image_y
 import random
 
 pg.init()
@@ -21,9 +21,12 @@ bg_imagem = pg.transform.scale(load_bg_image, (width, height))
 sound_shoot = os.path.join(base_dir, '..', 'sounds', 'explosion.wav')
 sound_file_move = os.path.join(base_dir, '..', 'sounds', 'select2.wav')
 music_fille = os.path.join(base_dir, '..', 'sounds', 'jazz_march_27.mp3')
+sound_fille_Collision = os.path.join(base_dir, '..', 'sounds', 'bomb.wav')
+
 pg.mixer.init()
 move_sound = pg.mixer.Sound(sound_file_move)
 shoot_sound = pg.mixer.Sound(sound_shoot)
+collision_sound = pg.mixer.Sound(sound_fille_Collision)
 pg.mixer.music.load(music_fille)
 pg.mixer.music.play(-1)
 shooting = False
@@ -78,7 +81,6 @@ while running:
     if x > width - width_img:
         x = width - width_img
 
-
     screen.blit(bg_imagem, (0, 0))
 
     screen.blit(current_image, (x, y))
@@ -99,6 +101,12 @@ while running:
         pg.draw.circle(screen, colors['Vermelho'], (int(bullet_x), int(bullet_y)), 8)
 
         if bullet_x > width or bullet_y < 0:
+            shooting = False
+
+    for ball in balls[:]:
+        if abs(bullet_x - ball[0]) < 30 and abs(bullet_y - ball[1]) < 30:
+            balls.remove(ball)
+            collision_sound.play()
             shooting = False
 
     pg.display.flip()
