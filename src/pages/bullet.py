@@ -23,6 +23,6 @@ class BulletGame:
     def collide(self, ball):
         dx = self.position_x - ball.position[0]
         dy = self.position_y - ball.position[1]
-        distance = (dx**2 + dy**2) ** 0.5
+        distance = (dx**2 + dy**2) ** 0.4
 
         return distance < (self.ray + ball.ray + 5)
