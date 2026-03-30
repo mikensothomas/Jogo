@@ -48,7 +48,6 @@ shoot_sound = pg.mixer.Sound(sound_shoot)
 collision_sound = pg.mixer.Sound(sound_fille_Collision)
 pg.mixer.music.load(music_fille)
 pg.mixer.music.play(-1)
-shooting = False
 last_time = pg.time.get_ticks()
 balls = []
 bullets  = []
@@ -120,7 +119,7 @@ while running:
         alpha = 0
         fade_direction = 1
     title.set_alpha(alpha)
-    screen.blit(title, (300, 50))
+    screen.blit(title, (250, 50))
     screen.blit(pontuation, (950, 550))
     screen.blit(count, (950, 650))
     
