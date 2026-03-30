@@ -14,3 +14,6 @@ interval = 1000
 image_x = 200
 image_y = 100
 ray = 8
+alpha = 0
+fade_speed = 15
+fade_direction = 1

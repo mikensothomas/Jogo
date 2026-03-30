@@ -15,7 +15,10 @@ from src.settings.setting import (
     image_x, 
     interval, 
     image_y,
-    ray
+    ray,
+    alpha,
+    fade_speed,
+    fade_direction
 )
 from src.pages.ball import BallGame
 from src.pages.bullet import BulletGame
@@ -39,6 +42,7 @@ music_fille = os.path.join(base_dir, '..', 'sounds', 'jazz_march_27.mp3')
 sound_fille_Collision = os.path.join(base_dir, '..', 'sounds', 'bomb.wav')
 
 pg.mixer.init()
+pg.font.init()
 move_sound = pg.mixer.Sound(sound_file_move)
 shoot_sound = pg.mixer.Sound(sound_shoot)
 collision_sound = pg.mixer.Sound(sound_fille_Collision)
@@ -48,6 +52,14 @@ shooting = False
 last_time = pg.time.get_ticks()
 balls = []
 bullets  = []
+score = 0
+ball_game_count = 0
+count_ball = 0
+
+font = pg.font.SysFont("Arial", 60)
+font_score = pg.font.SysFont("Arial", 30)
+title = font.render("REBELIÃO DAS BOLINHAS", True, colors['Laranja'])
+pg.display.set_caption('REBELIÃO DAS BOLINHAS')
 
 running = True
 
@@ -78,6 +90,8 @@ while running:
                 shoot_sound.play(maxtime=50)
 
     keyboard = pg.key.get_pressed()
+    pontuation = font_score.render(f"Pontuação: {score} ", True, colors['Laranja'])
+    count = font_score.render(f"Acertou: {count_ball} em {ball_game_count} ", True, colors['Laranja'])
 
     if keyboard[pg.K_RIGHT]:
         current_image = rotation_image
@@ -97,11 +111,23 @@ while running:
     screen.blit(bg_imagem, (0, 0))
 
     screen.blit(current_image, (position_x, position_y))
-    
+
+    alpha += fade_speed * fade_direction
+    if alpha > 255:
+        alpha = 255
+        fade_direction = -1
+    elif alpha <= 0:
+        alpha = 0
+        fade_direction = 1
+    title.set_alpha(alpha)
+    screen.blit(title, (300, 50))
+    screen.blit(pontuation, (950, 550))
+    screen.blit(count, (950, 650))
     
     if current_time - last_time > interval:
         balls.append(BallGame(screen, colors['RosaClaro'], (width, random.randint(0, height-350)), 8))
         last_time = current_time
+        ball_game_count += 1
 
     for ball in balls:
         ball.move_balls(speed_balls)
@@ -118,7 +144,9 @@ while running:
         for ball in balls[:]:
             if bullet.collide(ball):
                 balls.remove(ball)
+                count_ball += 1
                 bullets.remove(bullet)
+                score += 10
                 collision_sound.play()
                 break
 
