@@ -58,6 +58,7 @@ paused = False
 started = False
 finished = False
 continueGame = False
+end_game = False
 
 font = pg.font.SysFont("Arial", 60)
 font_menu = pg.font.SysFont("Arial", 25)
@@ -109,7 +110,7 @@ while running:
                 if paused == True:
                     paused = False
             if event.key == pg.K_t:
-                running = False
+                end_game = True
 
     keyboard = pg.key.get_pressed()
     pontuation = font_score.render(f"Pontuação: {score} ", True, colors['Laranja'])
@@ -185,6 +186,8 @@ while running:
                         score += 10
                         collision_sound.play()
                         break
+    if end_game:
+        screen.blit(bg_imagem, (0, 0))
                 
     pg.display.flip()
 
