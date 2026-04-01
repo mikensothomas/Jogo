@@ -59,6 +59,7 @@ started = False
 finished = False
 continueGame = False
 end_game = False
+time_game = 120
 
 font = pg.font.SysFont("Arial", 60)
 font_menu = pg.font.SysFont("Arial", 25)
@@ -71,6 +72,7 @@ start = font_menu.render("I: Iniciar", True, colors['Verde'])
 pause = font_menu.render("P: Pausar", True, colors['Amarelo'])
 finish = font_menu.render("T: Terminar", True, colors['Vermelho'])
 continue_game = font_menu.render("C: Continuar", True, colors['Laranja'])
+time_to_play = font_score.render(f"Tempo: {time_game} ", True, colors['Laranja'])
 
 running = True
 
@@ -115,7 +117,7 @@ while running:
     keyboard = pg.key.get_pressed()
     pontuation = font_score.render(f"Pontuação: {score} ", True, colors['Laranja'])
     count = font_score.render(f"Acertou: {count_ball} em {ball_game_count} ", True, colors['Laranja'])
-
+        
     if not paused:
         if started:
             if keyboard[pg.K_RIGHT]:
@@ -151,7 +153,8 @@ while running:
     if paused:
         screen.blit(paused_game, (360, 300))
         screen.blit(continue_game, (300, 10))
-        
+
+    screen.blit(time_to_play, (10, 40))   
     screen.blit(title, (250, 50))
     screen.blit(pontuation, (950, 550))
     screen.blit(count, (950, 650))
@@ -165,6 +168,12 @@ while running:
                 balls.append(BallGame(screen, colors['RosaClaro'], (width, random.randint(0, height-350)), 8))
                 last_time = current_time
                 ball_game_count += 1
+
+                time_game -= 1
+                last_time = current_time
+                time_to_play = font_score.render(f"Tempo: {time_game} ", True, colors['Laranja'])
+                if time_game == 0:
+                    end_game = True
 
             for ball in balls:
                 ball.move_balls(speed_balls)
@@ -186,7 +195,7 @@ while running:
                         score += 10
                         collision_sound.play()
                         break
-    if end_game:
+    if time_game == 0 or end_game:
         screen.blit(bg_imagem, (0, 0))
                 
     pg.display.flip()
