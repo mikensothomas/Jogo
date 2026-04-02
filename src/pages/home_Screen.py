@@ -59,7 +59,9 @@ started = False
 finished = False
 continueGame = False
 end_game = False
-time_game = 120
+time_game = 60
+name = 'Mikenson Thomas'
+bullet_move = 0
 
 font = pg.font.SysFont("Arial", 60)
 font_menu = pg.font.SysFont("Arial", 25)
@@ -100,6 +102,7 @@ while running:
                 dy = -bullet_speed * math.sin(rad)
 
                 bullets.append(BulletGame(screen, colors['Vermelho'], position_x + 100, position_y, dx, dy, ray))
+                bullet_move += 1
 
                 if not paused and started:
                     shoot_sound.play(maxtime=50)
@@ -117,7 +120,18 @@ while running:
     keyboard = pg.key.get_pressed()
     pontuation = font_score.render(f"Pontuação: {score} ", True, colors['Laranja'])
     count = font_score.render(f"Acertou: {count_ball} em {ball_game_count} ", True, colors['Laranja'])
-        
+
+    historic_game_name = font_score.render(f"Nome: {name} ", True, colors['Laranja'])
+    historic_game_ball = font_score.render(f"Em: {ball_game_count} bolinhas você acertou: {count_ball} ", True, colors['Laranja'])
+    historic_game_score = font_score.render(f"Você ganhou: {score} pontos ", True, colors['Laranja'])
+    coungratulation = font_score.render("Parabéns, você Ganhou o jogo", True, colors['Laranja'])
+    not_coungratulation = font_score.render("Você perdeu a partida, pode recomeçar o jogo", True, colors['Vermelho'])
+
+    shots_text  = font_score.render(f"Tiros: {bullet_move} de 65", True, colors['Vermelho'])
+
+    if bullet_move == 60:
+        time_game = 0
+
     if not paused:
         if started:
             if keyboard[pg.K_RIGHT]:
@@ -161,6 +175,7 @@ while running:
     screen.blit(start, (10, 10))
     screen.blit(pause, (90, 10))
     screen.blit(finish, (190, 10))
+    screen.blit(shots_text, (10, 75))
     
     if not paused:
         if started:
@@ -196,7 +211,16 @@ while running:
                         collision_sound.play()
                         break
     if time_game == 0 or end_game:
+        paused = True
         screen.blit(bg_imagem, (0, 0))
+        screen.blit(historic_game_name, (360, 300))
+        screen.blit(historic_game_ball, (360, 200))
+        screen.blit(historic_game_score, (360, 100))
+
+        if count_ball >= (ball_game_count * 0.7):
+            screen.blit(coungratulation, (360, 400))
+        else:
+            screen.blit(not_coungratulation, (360, 400))
                 
     pg.display.flip()
 
