@@ -116,6 +116,12 @@ while running:
                     paused = False
             if event.key == pg.K_t:
                 end_game = True
+            if event.key == pg.K_f:
+                running = False
+            if event.key == pg.K_v:
+                time_game != 0
+                end_game = False
+                bullet_move != 60
 
     keyboard = pg.key.get_pressed()
     pontuation = font_score.render(f"Pontuação: {score} ", True, colors['Laranja'])
@@ -126,6 +132,8 @@ while running:
     historic_game_score = font_score.render(f"Você ganhou: {score} pontos ", True, colors['Laranja'])
     coungratulation = font_score.render("Parabéns, você Ganhou o jogo", True, colors['Laranja'])
     not_coungratulation = font_score.render("Você perdeu a partida, pode recomeçar o jogo", True, colors['Vermelho'])
+    return_to_start = font_score.render("V: Voltar ao início", True, colors['Laranja'])
+    close_window = font_score.render("F: Fechar o jogo", True, colors['Vermelho'])
 
     shots_text  = font_score.render(f"Tiros: {bullet_move} de 65", True, colors['Vermelho'])
 
@@ -216,6 +224,8 @@ while running:
         screen.blit(historic_game_name, (360, 300))
         screen.blit(historic_game_ball, (360, 200))
         screen.blit(historic_game_score, (360, 100))
+        screen.blit(return_to_start, (10, 10))
+        screen.blit(close_window, (220, 10))
 
         if count_ball >= (ball_game_count * 0.7):
             screen.blit(coungratulation, (360, 400))
