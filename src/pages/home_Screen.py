@@ -59,6 +59,7 @@ started = False
 finished = False
 continueGame = False
 end_game = False
+show_return = False
 time_game = 60
 name = 'Mikenson Thomas'
 bullet_move = 0
@@ -116,6 +117,7 @@ while running:
                     paused = False
             if event.key == pg.K_t:
                 end_game = True
+                show_return = True
             if event.key == pg.K_f:
                 running = False
             if event.key == pg.K_v:
@@ -224,7 +226,8 @@ while running:
         screen.blit(historic_game_name, (360, 300))
         screen.blit(historic_game_ball, (360, 200))
         screen.blit(historic_game_score, (360, 100))
-        screen.blit(return_to_start, (10, 10))
+        if show_return:
+            screen.blit(return_to_start, (10, 10))
         screen.blit(close_window, (220, 10))
 
         if count_ball >= (ball_game_count * 0.7):
