@@ -90,16 +90,23 @@ while running:
         if event.type == pg.KEYDOWN:
             if event.key == pg.K_SPACE:
 
-                rad = math.radians(angle - (-17))
+                gun_tip_offset = (-30, 40)
+                offset_x, offset_y = gun_tip_offset
+                rad = math.radians(angle)
+                rect = current_image.get_rect(center=(position_x, position_y))
+
+                rotated_x = offset_x * math.cos(rad) - offset_y * math.sin(rad)
+                rotated_y = offset_x * math.sin(rad) + offset_y * math.cos(rad)
+
                 distance = current_image.get_width() // 2
 
-                bullet_x = position_x + math.cos(rad) * distance
-                bullet_x = position_y + math.cos(rad) * distance
+                bullet_x = rect.centerx + rotated_x
+                bullet_y = rect.centery + rotated_y
 
                 dx = bullet_speed * math.cos(rad)
                 dy = -bullet_speed * math.sin(rad)
 
-                bullets.append(BulletGame(screen, colors['Vermelho'], position_x, position_y, dx, dy, ray))
+                bullets.append(BulletGame(screen, colors['Vermelho'], bullet_x, bullet_y, dx, dy, ray))
                 bullet_move_count += 1
 
                 if not paused and started:
@@ -153,6 +160,8 @@ while running:
                 angle -= 5
             current_image = pg.transform.rotate(image_size, angle)
 
+    rect = current_image.get_rect(center=(position_x, position_y))
+
     if position_x - half_width < 0:
         position_x = half_width
 
@@ -161,7 +170,6 @@ while running:
 
     screen.blit(bg_imagem, (0, 0))
 
-    rect = current_image.get_rect(center=(position_x, position_y))
     screen.blit(current_image, rect)
 
     if not paused:
