@@ -33,13 +33,33 @@ image_size = pg.transform.smoothscale(image, (image_x, image_y))
 rotation_image = pg.transform.rotate(image_size, angle)
 current_image = rotation_image
 half_width = current_image.get_width() // 2
-bg_image_path = os.path.join(base_dir, '..', 'assets', 'background.png')
-load_bg_image = pg.image.load(bg_image_path)
-bg_imagem = pg.transform.scale(load_bg_image, (width, height))
+
 sound_shoot = os.path.join(base_dir, '..', 'sounds', 'explosion.wav')
 sound_file_move = os.path.join(base_dir, '..', 'sounds', 'select2.wav')
 music_fille = os.path.join(base_dir, '..', 'sounds', 'jazz_march_27.mp3')
 sound_fille_Collision = os.path.join(base_dir, '..', 'sounds', 'bomb.wav')
+
+# Imagens da primeira tela
+bg_image_path = os.path.join(base_dir, '..', 'assets', 'background.png')
+load_bg_image = pg.image.load(bg_image_path)
+bg_imagem = pg.transform.scale(load_bg_image, (width, height))
+
+# Imagens da segunda tela
+bg_image_path2 = os.path.join(base_dir, '..', 'assets', 'background_image.jpg')
+load_bg2_image_load = pg.image.load(bg_image_path2)
+load_bg2_image = pg.transform.scale(load_bg2_image_load, (width, height))
+
+personagem_nivel_dois = os.path.join(base_dir, '..', 'assets', 'imagem_nivel2.png')
+personagem_nivel_dois_load = pg.image.load(personagem_nivel_dois)
+largura, altura = personagem_nivel_dois_load.get_size()
+personagem_nivel_dois_size = pg.transform.smoothscale(personagem_nivel_dois_load, (largura //2, altura // 2))
+
+# imagens da terceira tela
+bg_image_path3 = os.path.join(base_dir, '..', 'assets', 'background_image_3.jpg')
+load_bg3_image_load = pg.image.load(bg_image_path3)
+load_bg3_image = pg.transform.scale(load_bg3_image_load, (width, height))
+
+
 
 pg.mixer.init()
 pg.font.init()
@@ -230,19 +250,30 @@ while running:
                         collision_sound.play()
                         break
     if time_game == 0 or end_game:
+        screen.blit(load_bg2_image, (0, 0))
         paused = True
-        screen.blit(bg_imagem, (0, 0))
-        screen.blit(historic_game_name, (360, 300))
-        screen.blit(historic_game_ball, (360, 200))
-        screen.blit(historic_game_score, (360, 100))
-        if show_return:
-            screen.blit(return_to_start, (10, 10))
-        screen.blit(close_window, (220, 10))
 
-        if count_ball >= (ball_game_count * 0.7):
-            screen.blit(coungratulation, (360, 400))
-        else:
-            screen.blit(not_coungratulation, (360, 400))
+        screen.blit(personagem_nivel_dois_size, (20, 450))
+
+    # if time_game == 0 or end_game:
+    #     screen.blit(load_bg3_image, (0, 0))
+    #     paused = True
+
+
+    # if (time_game == 0 or end_game) and count_ball < ball_game_count * 70:
+    #     paused = True
+    #     screen.blit(bg_imagem, (0, 0))
+    #     screen.blit(historic_game_name, (360, 300))
+    #     screen.blit(historic_game_ball, (360, 200))
+    #     screen.blit(historic_game_score, (360, 100))
+    #     if show_return:
+    #         screen.blit(return_to_start, (10, 10))
+    #     screen.blit(close_window, (220, 10))
+
+    #     if count_ball >= (ball_game_count * 0.7):
+    #         screen.blit(coungratulation, (360, 400))
+    #     else:
+    #         screen.blit(not_coungratulation, (360, 400))
                 
     pg.display.flip()
 
