@@ -32,7 +32,7 @@ image = pg.image.load(image_file)
 image_size = pg.transform.smoothscale(image, (image_x, image_y))
 rotation_image = pg.transform.rotate(image_size, angle)
 current_image = rotation_image
-width_img = current_image.get_width()
+half_width = current_image.get_width() // 2
 bg_image_path = os.path.join(base_dir, '..', 'assets', 'background.png')
 load_bg_image = pg.image.load(bg_image_path)
 bg_imagem = pg.transform.scale(load_bg_image, (width, height))
@@ -62,7 +62,7 @@ end_game = False
 show_return = False
 time_game = 60
 name = 'Mikenson Thomas'
-bullet_move = 0
+bullet_move_count = 0
 
 font = pg.font.SysFont("Arial", 60)
 font_menu = pg.font.SysFont("Arial", 25)
@@ -89,21 +89,18 @@ while running:
 
         if event.type == pg.KEYDOWN:
             if event.key == pg.K_SPACE:
-                bullet_x = position_x + 100
-                bullet_y = position_y
 
-                if current_image == rotation_image:
-                    angle = 60
-                else:
-                    angle = 120
+                rad = math.radians(angle - (-17))
+                distance = current_image.get_width() // 2
 
-                rad = math.radians(angle)
+                bullet_x = position_x + math.cos(rad) * distance
+                bullet_x = position_y + math.cos(rad) * distance
 
                 dx = bullet_speed * math.cos(rad)
                 dy = -bullet_speed * math.sin(rad)
 
-                bullets.append(BulletGame(screen, colors['Vermelho'], position_x + 100, position_y, dx, dy, ray))
-                bullet_move += 1
+                bullets.append(BulletGame(screen, colors['Vermelho'], position_x, position_y, dx, dy, ray))
+                bullet_move_count += 1
 
                 if not paused and started:
                     shoot_sound.play(maxtime=50)
@@ -123,7 +120,7 @@ while running:
             if event.key == pg.K_v:
                 time_game != 0
                 end_game = False
-                bullet_move != 60
+                bullet_move_count != 60
 
     keyboard = pg.key.get_pressed()
     pontuation = font_score.render(f"Pontuação: {score} ", True, colors['Laranja'])
@@ -137,31 +134,35 @@ while running:
     return_to_start = font_score.render("V: Voltar ao início", True, colors['Laranja'])
     close_window = font_score.render("F: Fechar o jogo", True, colors['Vermelho'])
 
-    shots_text  = font_score.render(f"Tiros: {bullet_move} de 65", True, colors['Vermelho'])
+    shots_text  = font_score.render(f"Tiros: {bullet_move_count} de 65", True, colors['Vermelho'])
 
-    if bullet_move == 60:
+    if bullet_move_count == 60:
         time_game = 0
 
     if not paused:
         if started:
             if keyboard[pg.K_RIGHT]:
-                current_image = rotation_image
                 position_x += speed
                 move_sound.play(maxtime=50)
             if keyboard[pg.K_LEFT]:
-                current_image = pg.transform.flip(rotation_image, True, False)
                 position_x -= speed
                 move_sound.play(maxtime=50)
+            if keyboard[pg.K_UP]:
+                angle += 5
+            if keyboard[pg.K_DOWN]:
+                angle -= 5
+            current_image = pg.transform.rotate(image_size, angle)
 
-    if position_x < 0:
-        position_x = 0
+    if position_x - half_width < 0:
+        position_x = half_width
 
-    if position_x > width - width_img:
-        position_x = width - width_img
+    if position_x + half_width > width:
+        position_x = width - half_width
 
     screen.blit(bg_imagem, (0, 0))
 
-    screen.blit(current_image, (position_x, position_y))
+    rect = current_image.get_rect(center=(position_x, position_y))
+    screen.blit(current_image, rect)
 
     if not paused:
         alpha += fade_speed * fade_direction

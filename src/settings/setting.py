@@ -1,7 +1,7 @@
 width = 1200
 height = 720
-position_x = 0
-position_y = 500
+position_x = 100
+position_y = 600
 angle = 60
 bullet_speed = 80
 speed_bullet_x = 20
