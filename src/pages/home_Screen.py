@@ -96,7 +96,8 @@ bullet_move_count = 0
 font = pg.font.SysFont("Arial", 60)
 font_menu = pg.font.SysFont("Arial", 25)
 font_score = pg.font.SysFont("Arial", 30)
-title = font.render("REBELIÃO DAS BOLINHAS", True, colors['Laranja'])
+title = font.render("REBELIÃO DAS BOLINHAS NÍVEL 1", True, colors['Laranja'])
+title_2 = font.render("REBELIÃO DAS BOLINHAS NÍVEL 2", True, colors['Laranja'])
 paused_game = font.render("JOGO PAUSADO", True, colors['Amarelo'])
 pg.display.set_caption('REBELIÃO DAS BOLINHAS')
 
@@ -148,27 +149,46 @@ while running:
                 if not paused and started:
                     shoot_sound.play(maxtime=50)
 
-            if event.key == pg.K_p:
-                paused = True
-            if event.key == pg.K_i:
-                started = True
-            if event.key == pg.K_c:
-                if paused == True:
-                    paused = False
-            if event.key == pg.K_t:
-                end_game = True
-                show_return = True
-            if event.key == pg.K_f:
-                running = False
-            if event.key == pg.K_v:
-                time_game != 0
-                end_game = False
-                bullet_move_count != 60
+            if not (time_game == 0 or end_game):
+                if event.key == pg.K_p:
+                    paused = True
+                if event.key == pg.K_i:
+                    started = True
+                if event.key == pg.K_c:
+                    if paused == True:
+                        paused = False
+                if event.key == pg.K_t:
+                    end_game = True
+                    show_return = True
+                if event.key == pg.K_f:
+                    running = False
+                if event.key == pg.K_v:
+                    time_game != 0
+                    end_game = False
+                    bullet_move_count != 60
+            else:
+                if event.key == pg.K_p:
+                    paused = True
+                if event.key == pg.K_i:
+                    started = True
+                if event.key == pg.K_c:
+                    if paused == True:
+                        paused = False
+                if event.key == pg.K_t:
+                    end_game = True
+                    show_return = True
+                if event.key == pg.K_f:
+                    running = False
+                if event.key == pg.K_v:
+                    time_game != 0
+                    end_game = False
+                    bullet_move_count != 60
 
     keyboard = pg.key.get_pressed()
     pontuation = font_score.render(f"Pontuação: {score} ", True, colors['Laranja'])
     count = font_score.render(f"Acertou: {count_ball} em {ball_game_count} ", True, colors['Laranja'])
 
+    # Históricos
     historic_game_name = font_score.render(f"Nome: {name} ", True, colors['Laranja'])
     historic_game_ball = font_score.render(f"Em: {ball_game_count} bolinhas você acertou: {count_ball} ", True, colors['Laranja'])
     historic_game_score = font_score.render(f"Você ganhou: {score} pontos ", True, colors['Laranja'])
@@ -192,8 +212,10 @@ while running:
                 move_sound.play(maxtime=50)
             if keyboard[pg.K_UP]:
                 angle += 5
+                move_sound.play(maxtime=50)
             if keyboard[pg.K_DOWN]:
                 angle -= 5
+                move_sound.play(maxtime=50)
             current_image = pg.transform.rotate(image_size, angle)
 
     rect = current_image.get_rect(center=(position_x, position_y))
@@ -218,6 +240,7 @@ while running:
             fade_direction = 1
         
     title.set_alpha(alpha)
+    title_2.set_alpha(alpha)
 
     if paused:
         screen.blit(paused_game, (360, 300))
@@ -266,19 +289,24 @@ while running:
                         collision_sound.play()
                         break
     if time_game == 0 or end_game:
+
+        pontuation_2 = font_score.render(f"Pontuação: {score} ", True, colors['Laranja'])
+        count_2 = font_score.render(f"Acertou: {count_ball} em {ball_game_count} ", True, colors['Laranja'])
                 
-        if keyboard[pg.K_RIGHT]:
-            pisicao_x_imagem_nivel_dois += speed
-            move_sound.play(maxtime=50)
-        if keyboard[pg.K_LEFT]:
-            pisicao_x_imagem_nivel_dois -= speed
-            move_sound.play(maxtime=50)
-        if keyboard[pg.K_UP]:
-            angle2 += 5
-            move_sound.play(maxtime=50)
-        if keyboard[pg.K_DOWN]:
-            angle2 -= 5
-            move_sound.play(maxtime=50)
+        if not paused:
+            if start:
+                if keyboard[pg.K_RIGHT]:
+                    pisicao_x_imagem_nivel_dois += speed
+                    move_sound.play(maxtime=50)
+                if keyboard[pg.K_LEFT]:
+                    pisicao_x_imagem_nivel_dois -= speed
+                    move_sound.play(maxtime=50)
+                if keyboard[pg.K_UP]:
+                    angle2 += 5
+                    move_sound.play(maxtime=50)
+                if keyboard[pg.K_DOWN]:
+                    angle2 -= 5
+                    move_sound.play(maxtime=50)
 
         current_image_nivel_2 = pg.transform.rotate(personagem_nivel_dois_size, angle2)
         rect = current_image_nivel_2.get_rect(center=(pisicao_x_imagem_nivel_dois, pisicao_y_imagem_nivel_dois))
@@ -290,6 +318,15 @@ while running:
 
         screen.blit(load_bg2_image, (0, 0))
         screen.blit(current_image_nivel_2, rect)
+        screen.blit(title_2, (250, 50))
+        screen.blit(pontuation_2, (950, 350))
+        screen.blit(count_2, (950, 300))
+
+        screen.blit(time_to_play, (10, 40))   
+        screen.blit(start, (10, 10))
+        screen.blit(pause, (90, 10))
+        screen.blit(finish, (190, 10))
+        screen.blit(shots_text, (10, 75))
 
         if current_time - last_time > interval:
             balls.append(BallGame(screen, colors['RosaClaro'], (width, random.randint(0, height-350)), 8))
