@@ -17,3 +17,6 @@ ray = 8
 alpha = 0
 fade_speed = 15
 fade_direction = 1
+pisicao_x_imagem_nivel_dois = 90
+pisicao_y_imagem_nivel_dois = 600
+angle2 = -10

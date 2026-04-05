@@ -18,7 +18,10 @@ from src.settings.setting import (
     ray,
     alpha,
     fade_speed,
-    fade_direction
+    fade_direction,
+    pisicao_x_imagem_nivel_dois,
+    pisicao_y_imagem_nivel_dois,
+    angle2
 )
 from src.pages.ball import BallGame
 from src.pages.bullet import BulletGame
@@ -27,6 +30,8 @@ pg.init()
 screen = pg.display.set_mode((width, height))
 clock = pg.time.Clock()
 base_dir = os.path.dirname(__file__)
+
+# Arma
 image_file = os.path.join(base_dir,'..', 'assets', 'imagem2.png')
 image = pg.image.load(image_file)
 image_size = pg.transform.smoothscale(image, (image_x, image_y))
@@ -34,6 +39,7 @@ rotation_image = pg.transform.rotate(image_size, angle)
 current_image = rotation_image
 half_width = current_image.get_width() // 2
 
+# Sons
 sound_shoot = os.path.join(base_dir, '..', 'sounds', 'explosion.wav')
 sound_file_move = os.path.join(base_dir, '..', 'sounds', 'select2.wav')
 music_fille = os.path.join(base_dir, '..', 'sounds', 'jazz_march_27.mp3')
@@ -53,6 +59,9 @@ personagem_nivel_dois = os.path.join(base_dir, '..', 'assets', 'imagem_nivel2.pn
 personagem_nivel_dois_load = pg.image.load(personagem_nivel_dois)
 largura, altura = personagem_nivel_dois_load.get_size()
 personagem_nivel_dois_size = pg.transform.smoothscale(personagem_nivel_dois_load, (largura //2, altura // 2))
+rot_imagem = pg.transform.rotate(personagem_nivel_dois_size, angle2)
+current_image_nivel_2 = rot_imagem
+half_width_image_nivel_2 = current_image_nivel_2.get_width() // 2
 
 # imagens da terceira tela
 bg_image_path3 = os.path.join(base_dir, '..', 'assets', 'background_image_3.jpg')
@@ -110,18 +119,25 @@ while running:
         if event.type == pg.KEYDOWN:
             if event.key == pg.K_SPACE:
 
-                gun_tip_offset = (-30, 40)
-                offset_x, offset_y = gun_tip_offset
-                rad = math.radians(angle)
-                rect = current_image.get_rect(center=(position_x, position_y))
+                gun_tip_offset_1 = (-30, 40)
+                gun_tip_offset_2 = (-10, -70)
+
+                if not (time_game == 0 or end_game):
+                    offset_x, offset_y = gun_tip_offset_1
+                    rad = math.radians(angle)
+                    center_x = position_x
+                    center_y = position_y
+                else:
+                    offset_x, offset_y = gun_tip_offset_2
+                    rad = math.radians(angle2 + 130)
+                    center_x = pisicao_x_imagem_nivel_dois
+                    center_y = pisicao_y_imagem_nivel_dois
 
                 rotated_x = offset_x * math.cos(rad) - offset_y * math.sin(rad)
                 rotated_y = offset_x * math.sin(rad) + offset_y * math.cos(rad)
 
-                distance = current_image.get_width() // 2
-
-                bullet_x = rect.centerx + rotated_x
-                bullet_y = rect.centery + rotated_y
+                bullet_x = center_x + rotated_x
+                bullet_y = center_y + rotated_y
 
                 dx = bullet_speed * math.cos(rad)
                 dy = -bullet_speed * math.sin(rad)
@@ -250,10 +266,60 @@ while running:
                         collision_sound.play()
                         break
     if time_game == 0 or end_game:
-        screen.blit(load_bg2_image, (0, 0))
-        paused = True
+                
+        if keyboard[pg.K_RIGHT]:
+            pisicao_x_imagem_nivel_dois += speed
+            move_sound.play(maxtime=50)
+        if keyboard[pg.K_LEFT]:
+            pisicao_x_imagem_nivel_dois -= speed
+            move_sound.play(maxtime=50)
+        if keyboard[pg.K_UP]:
+            angle2 += 5
+            move_sound.play(maxtime=50)
+        if keyboard[pg.K_DOWN]:
+            angle2 -= 5
+            move_sound.play(maxtime=50)
 
-        screen.blit(personagem_nivel_dois_size, (20, 450))
+        current_image_nivel_2 = pg.transform.rotate(personagem_nivel_dois_size, angle2)
+        rect = current_image_nivel_2.get_rect(center=(pisicao_x_imagem_nivel_dois, pisicao_y_imagem_nivel_dois))
+
+        if pisicao_x_imagem_nivel_dois - half_width_image_nivel_2 < 0:
+            pisicao_x_imagem_nivel_dois = half_width_image_nivel_2
+        if pisicao_x_imagem_nivel_dois + half_width_image_nivel_2 > width:
+            pisicao_x_imagem_nivel_dois = width - half_width_image_nivel_2
+
+        screen.blit(load_bg2_image, (0, 0))
+        screen.blit(current_image_nivel_2, rect)
+
+        if current_time - last_time > interval:
+            balls.append(BallGame(screen, colors['RosaClaro'], (width, random.randint(0, height-350)), 8))
+            last_time = current_time
+            ball_game_count += 1
+
+            time_game -= 1
+            last_time = current_time
+            time_to_play = font_score.render(f"Tempo: {time_game} ", True, colors['Laranja'])
+
+        for ball in balls:
+            ball.move_balls(speed_balls)
+            ball.draw_balls()
+
+        for bullet in bullets[:]:
+            bullet.move_bullet()
+            bullet.draw_bullet()
+
+            if bullet.is_off_screen(width, height):
+                bullets.remove(bullet)
+
+        for bullet in bullets[:]:
+            for ball in balls[:]:
+                if bullet.collide(ball):
+                    balls.remove(ball)
+                    count_ball += 1
+                    bullets.remove(bullet)
+                    score += 10
+                    collision_sound.play()
+                    break
 
     # if time_game == 0 or end_game:
     #     screen.blit(load_bg3_image, (0, 0))
