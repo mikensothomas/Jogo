@@ -10,7 +10,6 @@ bullet_x = 100
 bullet_y = 100
 speed = 20
 speed_balls = 5
-interval = 1000
 image_x = 200
 image_y = 100
 ray = 8
