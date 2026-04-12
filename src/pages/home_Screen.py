@@ -92,6 +92,9 @@ show_return = False
 time_game = 180
 name = 'Mikenson Thomas'
 bullet_move_count = 0
+nivel_2 = False
+nivel_3 = False
+historico = False
 
 font = pg.font.SysFont("Arial", 60)
 font_menu = pg.font.SysFont("Arial", 25)
@@ -266,9 +269,14 @@ while running:
                         score += 10
                         collision_sound.play()
                         break
+    if time_game == 120:
+        if 45 <= count_ball <= 60:
+            nivel_2 = True
+        else:
+            historico = True
 # ===============================================================================================================================================
 # ===============================================================================================================================================
-    if ((time_game <= 120) or (bullet_move_count > 65 and ball_game_count <= 130 )) and (count_ball == 65 * 0.7):
+    if nivel_2:
         started = True
         paused = False
 
@@ -341,10 +349,14 @@ while running:
                             score += 10
                             collision_sound.play()
                             break
-
+    if time_game == 60:
+        if 45 <= count_ball <= 60:
+            nivel_3 = True
+        else:
+            historico = True
 # ===============================================================================================================================================
 # ===============================================================================================================================================
-    elif ((time_game <= 60) or (bullet_move_count > 130 and ball_game_count <= 165 )) and (count_ball == 65 * 0.7):
+    elif nivel_3:
         started = True
         paused = False
 
@@ -417,15 +429,13 @@ while running:
                             score += 10
                             collision_sound.play()
                             break
+    if time_game == 0:
+        historico = True
 
 # ===============================================================================================================================================
 # ===============================================================================================================================================
-    if time_game == 0 or end_game:
-        screen.blit(load_bg3_image, (0, 0))
-        paused = True
 
-
-    if (time_game == 0 or end_game) or count_ball < ball_game_count * 70:
+    if historico:
         paused = True
         screen.blit(bg_imagem, (0, 0))
         screen.blit(historic_game_name, (360, 300))
