@@ -285,13 +285,14 @@ while running:
     if nivel_2:
         pontuation_2 = font_score.render(f"Pontuação: {score} ", True, colors['Laranja'])
         count_2 = font_score.render(f"Acertou: {count_ball} em {ball_game_count} ", True, colors['Laranja'])
-        if current_time - last_time > 1000:
-            time_game -= 1
-            last_time = current_time
-        time_to_play_2 = font_score.render(f"Tempo: {time_game} ", True, colors['Laranja'])
 
         if not paused: 
-            if started:    
+            if started:
+                if current_time - last_time > 1000:
+                    time_game -= 1
+                    last_time = current_time
+                    time_to_play = font_score.render(f"Tempo: {time_game} ", True, colors['Laranja']) 
+
                 if keyboard[pg.K_RIGHT]:
                     pisicao_x_imagem_nivel_dois += speed
                     move_sound.play(maxtime=50)
@@ -323,7 +324,7 @@ while running:
             screen.blit(paused_game, (360, 300))
             screen.blit(continue_game, (300, 10))
 
-        screen.blit(time_to_play_2, (10, 40))   
+        screen.blit(time_to_play, (10, 40))   
         screen.blit(start, (10, 10))
         screen.blit(pause, (90, 10))
         screen.blit(finish, (190, 10))
@@ -367,13 +368,14 @@ while running:
     elif nivel_3:
         pontuation_2 = font_score.render(f"Pontuação: {score} ", True, colors['Laranja'])
         count_2 = font_score.render(f"Acertou: {count_ball} em {ball_game_count} ", True, colors['Laranja'])
-        if current_time - last_time > 1000:
-            time_game -= 1
-            last_time = current_time
-        time_to_play_3 = font_score.render(f"Tempo: {time_game} ", True, colors['Laranja'])
 
         if not paused: 
             if started:
+                if current_time - last_time > 1000:
+                    time_game -= 1
+                    last_time = current_time
+                    time_to_play = font_score.render(f"Tempo: {time_game} ", True, colors['Laranja'])
+                    
                 if keyboard[pg.K_RIGHT]:
                     pisicao_x_imagem_nivel_dois += speed
                     move_sound.play(maxtime=50)
@@ -405,7 +407,7 @@ while running:
             screen.blit(paused_game, (360, 300))
             screen.blit(continue_game, (300, 10))
 
-        screen.blit(time_to_play_3, (10, 40))   
+        screen.blit(time_to_play, (10, 40))   
         screen.blit(start, (10, 10))
         screen.blit(pause, (90, 10))
         screen.blit(finish, (190, 10))
