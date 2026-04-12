@@ -111,6 +111,21 @@ finish = font_menu.render("T: Terminar", True, colors['Vermelho'])
 continue_game = font_menu.render("C: Continuar", True, colors['Laranja'])
 time_to_play = font_score.render(f"Tempo: {time_game} ", True, colors['Laranja'])
 
+def handle_global_input(event):
+    global paused, started, end_game, running, historico
+
+    if event.key == pg.K_p:
+        paused = True
+    elif event.key == pg.K_i:
+        started = True
+    elif event.key == pg.K_c and paused:
+        paused = False
+    elif event.key == pg.K_t:
+        end_game = True
+        historico = True
+    elif event.key == pg.K_f:
+        running = False
+
 running = True
 
 while running:
@@ -122,6 +137,9 @@ while running:
             running = False
 
         if event.type == pg.KEYDOWN:
+
+            handle_global_input(event)
+
             if not paused:
                 if started:
                     if event.key == pg.K_SPACE:
@@ -129,7 +147,7 @@ while running:
                         gun_tip_offset_1 = (-30, 40)
                         gun_tip_offset_2 = (-10, -70)
 
-                        if not (time_game == 0 or end_game):
+                        if not (nivel_2 or nivel_3):
                             offset_x, offset_y = gun_tip_offset_1
                             rad = math.radians(angle)
                             center_x = position_x
@@ -155,19 +173,6 @@ while running:
                         if not paused and started:
                             shoot_sound.play(maxtime=50)
 
-            if event.key == pg.K_p:
-                paused = True
-            if event.key == pg.K_i:
-                started = True
-            if event.key == pg.K_c:
-                if paused == True:
-                    paused = False
-            if event.key == pg.K_t:
-                end_game = True
-                show_return = True
-            if event.key == pg.K_f:
-                running = False
-
     keyboard = pg.key.get_pressed()
     pontuation = font_score.render(f"Pontuação: {score} ", True, colors['Laranja'])
     count = font_score.render(f"Acertou: {count_ball} em {ball_game_count} ", True, colors['Laranja'])
@@ -181,7 +186,7 @@ while running:
     return_to_start = font_score.render("V: Voltar ao início", True, colors['Laranja'])
     close_window = font_score.render("F: Fechar o jogo", True, colors['Vermelho'])
 
-    shots_text  = font_score.render(f"Tiros: {bullet_move_count} de 195", True, colors['Vermelho'])
+    shots_text  = font_score.render(f"Tiros: {bullet_move_count}", True, colors['Vermelho'])
 
     if not paused:
         if started:
@@ -270,16 +275,14 @@ while running:
                         collision_sound.play()
                         break
     if time_game == 120:
-        if 45 <= count_ball <= 60:
+        if 45 <= count_ball <= 65:
             nivel_2 = True
         else:
             historico = True
-# ===============================================================================================================================================
+    if end_game:
+        historico = True
 # ===============================================================================================================================================
     if nivel_2:
-        started = True
-        paused = False
-
         pontuation_2 = font_score.render(f"Pontuação: {score} ", True, colors['Laranja'])
         count_2 = font_score.render(f"Acertou: {count_ball} em {ball_game_count} ", True, colors['Laranja'])
         if current_time - last_time > 1000:
@@ -316,6 +319,10 @@ while running:
         screen.blit(pontuation_2, (950, 350))
         screen.blit(count_2, (950, 300))
 
+        if paused:
+            screen.blit(paused_game, (360, 300))
+            screen.blit(continue_game, (300, 10))
+
         screen.blit(time_to_play_2, (10, 40))   
         screen.blit(start, (10, 10))
         screen.blit(pause, (90, 10))
@@ -350,16 +357,14 @@ while running:
                             collision_sound.play()
                             break
     if time_game == 60:
-        if 45 <= count_ball <= 60:
+        if 90 <= count_ball <= 130:
             nivel_3 = True
         else:
             historico = True
-# ===============================================================================================================================================
+    if end_game:
+        historico = True
 # ===============================================================================================================================================
     elif nivel_3:
-        started = True
-        paused = False
-
         pontuation_2 = font_score.render(f"Pontuação: {score} ", True, colors['Laranja'])
         count_2 = font_score.render(f"Acertou: {count_ball} em {ball_game_count} ", True, colors['Laranja'])
         if current_time - last_time > 1000:
@@ -368,7 +373,7 @@ while running:
         time_to_play_3 = font_score.render(f"Tempo: {time_game} ", True, colors['Laranja'])
 
         if not paused: 
-            if started:    
+            if started:
                 if keyboard[pg.K_RIGHT]:
                     pisicao_x_imagem_nivel_dois += speed
                     move_sound.play(maxtime=50)
@@ -395,6 +400,10 @@ while running:
         screen.blit(title_3, (250, 50))
         screen.blit(pontuation_2, (950, 350))
         screen.blit(count_2, (950, 300))
+
+        if paused:
+            screen.blit(paused_game, (360, 300))
+            screen.blit(continue_game, (300, 10))
 
         screen.blit(time_to_play_3, (10, 40))   
         screen.blit(start, (10, 10))
@@ -429,12 +438,9 @@ while running:
                             score += 10
                             collision_sound.play()
                             break
-    if time_game == 0:
+    if time_game == 0 or end_game:
         historico = True
-
 # ===============================================================================================================================================
-# ===============================================================================================================================================
-
     if historico:
         paused = True
         screen.blit(bg_imagem, (0, 0))
@@ -445,7 +451,7 @@ while running:
             screen.blit(return_to_start, (10, 10))
         screen.blit(close_window, (220, 10))
 
-        if count_ball >= (ball_game_count * 0.7):
+        if 135 <= count_ball <= 195:
             screen.blit(coungratulation, (360, 400))
         else:
             screen.blit(not_coungratulation, (360, 400))
