@@ -67,8 +67,6 @@ bg_image_path3 = os.path.join(base_dir, '..', 'assets', 'background_image_3.jpg'
 load_bg3_image_load = pg.image.load(bg_image_path3)
 load_bg3_image = pg.transform.scale(load_bg3_image_load, (width, height))
 
-
-
 pg.mixer.init()
 pg.font.init()
 move_sound = pg.mixer.Sound(sound_file_move)
@@ -77,7 +75,6 @@ collision_sound = pg.mixer.Sound(sound_fille_Collision)
 pg.mixer.music.load(music_fille)
 pg.mixer.music.play(-1)
 last_time = pg.time.get_ticks()
-last_time_nivel_3 = pg.time.get_ticks()
 balls = []
 bullets  = []
 score = 0
@@ -126,11 +123,23 @@ def handle_global_input(event):
     elif event.key == pg.K_f:
         running = False
 
+def update_timer():
+    global last_time, time_game, end_game
+
+    current_time = pg.time.get_ticks()
+
+    if current_time - last_time > 1000:
+        last_time = current_time
+        time_game -= 1
+
+        if time_game <= 0:
+            end_game = True
+        return True
+    return False
+
 running = True
 
 while running:
-
-    current_time = pg.time.get_ticks()
 
     for event in pg.event.get():
         if event.type == pg.QUIT:
@@ -140,38 +149,37 @@ while running:
 
             handle_global_input(event)
 
-            if not paused:
-                if started:
-                    if event.key == pg.K_SPACE:
+            if not paused and started:
+                if event.key == pg.K_SPACE:
 
-                        gun_tip_offset_1 = (-30, 40)
-                        gun_tip_offset_2 = (-10, -70)
+                    gun_tip_offset_1 = (-30, 40)
+                    gun_tip_offset_2 = (-10, -70)
 
-                        if not (nivel_2 or nivel_3):
-                            offset_x, offset_y = gun_tip_offset_1
-                            rad = math.radians(angle)
-                            center_x = position_x
-                            center_y = position_y
-                        else:
-                            offset_x, offset_y = gun_tip_offset_2
-                            rad = math.radians(angle2 + 130)
-                            center_x = pisicao_x_imagem_nivel_dois
-                            center_y = pisicao_y_imagem_nivel_dois
+                    if not (nivel_2 or nivel_3):
+                        offset_x, offset_y = gun_tip_offset_1
+                        rad = math.radians(angle)
+                        center_x = position_x
+                        center_y = position_y
+                    else:
+                        offset_x, offset_y = gun_tip_offset_2
+                        rad = math.radians(angle2 + 130)
+                        center_x = pisicao_x_imagem_nivel_dois
+                        center_y = pisicao_y_imagem_nivel_dois
 
-                        rotated_x = offset_x * math.cos(rad) - offset_y * math.sin(rad)
-                        rotated_y = offset_x * math.sin(rad) + offset_y * math.cos(rad)
+                    rotated_x = offset_x * math.cos(rad) - offset_y * math.sin(rad)
+                    rotated_y = offset_x * math.sin(rad) + offset_y * math.cos(rad)
 
-                        bullet_x = center_x + rotated_x
-                        bullet_y = center_y + rotated_y
+                    bullet_x = center_x + rotated_x
+                    bullet_y = center_y + rotated_y
 
-                        dx = bullet_speed * math.cos(rad)
-                        dy = -bullet_speed * math.sin(rad)
+                    dx = bullet_speed * math.cos(rad)
+                    dy = -bullet_speed * math.sin(rad)
 
-                        bullets.append(BulletGame(screen, colors['Vermelho'], bullet_x, bullet_y, dx, dy, ray))
-                        bullet_move_count += 1
+                    bullets.append(BulletGame(screen, colors['Vermelho'], bullet_x, bullet_y, dx, dy, ray))
+                    bullet_move_count += 1
 
-                        if not paused and started:
-                            shoot_sound.play(maxtime=50)
+                    if not paused and started:
+                        shoot_sound.play(maxtime=50)
 
     keyboard = pg.key.get_pressed()
     pontuation = font_score.render(f"Pontuação: {score} ", True, colors['Laranja'])
@@ -188,21 +196,20 @@ while running:
 
     shots_text  = font_score.render(f"Tiros: {bullet_move_count}", True, colors['Vermelho'])
 
-    if not paused:
-        if started:
-            if keyboard[pg.K_RIGHT]:
-                position_x += speed
-                move_sound.play(maxtime=50)
-            if keyboard[pg.K_LEFT]:
-                position_x -= speed
-                move_sound.play(maxtime=50)
-            if keyboard[pg.K_UP]:
-                angle += 5
-                move_sound.play(maxtime=50)
-            if keyboard[pg.K_DOWN]:
-                angle -= 5
-                move_sound.play(maxtime=50)
-            current_image = pg.transform.rotate(image_size, angle)
+    if not paused and started:
+        if keyboard[pg.K_RIGHT]:
+            position_x += speed
+            move_sound.play(maxtime=50)
+        if keyboard[pg.K_LEFT]:
+            position_x -= speed
+            move_sound.play(maxtime=50)
+        if keyboard[pg.K_UP]:
+            angle += 5
+            move_sound.play(maxtime=50)
+        if keyboard[pg.K_DOWN]:
+            angle -= 5
+            move_sound.play(maxtime=50)
+        current_image = pg.transform.rotate(image_size, angle)
 
     rect = current_image.get_rect(center=(position_x, position_y))
 
@@ -242,38 +249,32 @@ while running:
     screen.blit(finish, (190, 10))
     screen.blit(shots_text, (10, 75))
     
-    if not paused:
-        if started:
-            if current_time - last_time > 1000:
-                balls.append(BallGame(screen, colors['RosaClaro'], (width, random.randint(0, height-350)), 8))
-                ball_game_count += 1
-                last_time = current_time
+    if not paused and started:
+        if update_timer():
+            balls.append(BallGame(screen, colors['RosaClaro'], (width, random.randint(0, height-350)), 8))
+            ball_game_count += 1
+            time_to_play = font_score.render(f"Tempo: {time_game} ", True, colors['Laranja'])
 
-                time_game -= 1
-                time_to_play = font_score.render(f"Tempo: {time_game} ", True, colors['Laranja'])
-                if time_game == 0:
-                    end_game = True
+        for ball in balls:
+            ball.move_balls(speed_balls)
+            ball.draw_balls()
 
-            for ball in balls:
-                ball.move_balls(speed_balls)
-                ball.draw_balls()
+        for bullet in bullets[:]:
+            bullet.move_bullet()
+            bullet.draw_bullet()
 
-            for bullet in bullets[:]:
-                bullet.move_bullet()
-                bullet.draw_bullet()
+            if bullet.is_off_screen(width, height):
+                bullets.remove(bullet)
 
-                if bullet.is_off_screen(width, height):
+        for bullet in bullets[:]:
+            for ball in balls[:]:
+                if bullet.collide(ball):
+                    balls.remove(ball)
+                    count_ball += 1
                     bullets.remove(bullet)
-
-            for bullet in bullets[:]:
-                for ball in balls[:]:
-                    if bullet.collide(ball):
-                        balls.remove(ball)
-                        count_ball += 1
-                        bullets.remove(bullet)
-                        score += 10
-                        collision_sound.play()
-                        break
+                    score += 10
+                    collision_sound.play()
+                    break
     if time_game == 120:
         if 45 <= count_ball <= 65:
             nivel_2 = True
@@ -286,25 +287,22 @@ while running:
         pontuation_2 = font_score.render(f"Pontuação: {score} ", True, colors['Laranja'])
         count_2 = font_score.render(f"Acertou: {count_ball} em {ball_game_count} ", True, colors['Laranja'])
 
-        if not paused: 
-            if started:
-                if current_time - last_time > 1000:
-                    time_game -= 1
-                    last_time = current_time
-                    time_to_play = font_score.render(f"Tempo: {time_game} ", True, colors['Laranja']) 
+        if not paused and started: 
+            if update_timer():
+                time_to_play = font_score.render(f"Tempo: {time_game} ", True, colors['Laranja']) 
 
-                if keyboard[pg.K_RIGHT]:
-                    pisicao_x_imagem_nivel_dois += speed
-                    move_sound.play(maxtime=50)
-                if keyboard[pg.K_LEFT]:
-                    pisicao_x_imagem_nivel_dois -= speed
-                    move_sound.play(maxtime=50)
-                if keyboard[pg.K_UP]:
-                    angle2 += 5
-                    move_sound.play(maxtime=50)
-                if keyboard[pg.K_DOWN]:
-                    angle2 -= 5
-                    move_sound.play(maxtime=50)
+            if keyboard[pg.K_RIGHT]:
+                pisicao_x_imagem_nivel_dois += speed
+                move_sound.play(maxtime=50)
+            if keyboard[pg.K_LEFT]:
+                pisicao_x_imagem_nivel_dois -= speed
+                move_sound.play(maxtime=50)
+            if keyboard[pg.K_UP]:
+                angle2 += 5
+                move_sound.play(maxtime=50)
+            if keyboard[pg.K_DOWN]:
+                angle2 -= 5
+                move_sound.play(maxtime=50)
 
         current_image_nivel_2 = pg.transform.rotate(personagem_nivel_dois_size, angle2)
         rect = current_image_nivel_2.get_rect(center=(pisicao_x_imagem_nivel_dois, pisicao_y_imagem_nivel_dois))
@@ -330,33 +328,31 @@ while running:
         screen.blit(finish, (190, 10))
         screen.blit(shots_text, (10, 75))
 
-        if not paused:
-            if started:
-                if current_time - last_time > 1000:
-                    balls.append(BallGame(screen, colors['RosaClaro'], (width, random.randint(0, height-350)), 8))
-                    last_time = current_time
-                    ball_game_count += 1
+        if not paused and started:
+            if update_timer():
+                balls.append(BallGame(screen, colors['RosaClaro'], (width, random.randint(0, height-350)), 8))
+                ball_game_count += 1
 
-                for ball in balls:
-                    ball.move_balls(speed_balls)
-                    ball.draw_balls()
+            for ball in balls:
+                ball.move_balls(speed_balls)
+                ball.draw_balls()
 
-                for bullet in bullets[:]:
-                    bullet.move_bullet()
-                    bullet.draw_bullet()
+            for bullet in bullets[:]:
+                bullet.move_bullet()
+                bullet.draw_bullet()
 
-                    if bullet.is_off_screen(width, height):
+                if bullet.is_off_screen(width, height):
+                    bullets.remove(bullet)
+
+            for bullet in bullets[:]:
+                for ball in balls[:]:
+                    if bullet.collide(ball):
+                        balls.remove(ball)
+                        count_ball += 1
                         bullets.remove(bullet)
-
-                for bullet in bullets[:]:
-                    for ball in balls[:]:
-                        if bullet.collide(ball):
-                            balls.remove(ball)
-                            count_ball += 1
-                            bullets.remove(bullet)
-                            score += 10
-                            collision_sound.play()
-                            break
+                        score += 10
+                        collision_sound.play()
+                        break
     if time_game == 60:
         if 90 <= count_ball <= 130:
             nivel_3 = True
@@ -365,29 +361,26 @@ while running:
     if end_game:
         historico = True
 # ===============================================================================================================================================
-    elif nivel_3:
+    if nivel_3:
         pontuation_2 = font_score.render(f"Pontuação: {score} ", True, colors['Laranja'])
         count_2 = font_score.render(f"Acertou: {count_ball} em {ball_game_count} ", True, colors['Laranja'])
 
-        if not paused: 
-            if started:
-                if current_time - last_time > 1000:
-                    time_game -= 1
-                    last_time = current_time
-                    time_to_play = font_score.render(f"Tempo: {time_game} ", True, colors['Laranja'])
-                    
-                if keyboard[pg.K_RIGHT]:
-                    pisicao_x_imagem_nivel_dois += speed
-                    move_sound.play(maxtime=50)
-                if keyboard[pg.K_LEFT]:
-                    pisicao_x_imagem_nivel_dois -= speed
-                    move_sound.play(maxtime=50)
-                if keyboard[pg.K_UP]:
-                    angle2 += 5
-                    move_sound.play(maxtime=50)
-                if keyboard[pg.K_DOWN]:
-                    angle2 -= 5
-                    move_sound.play(maxtime=50)
+        if not paused and started: 
+            if update_timer():
+                time_to_play = font_score.render(f"Tempo: {time_game} ", True, colors['Laranja'])
+
+            if keyboard[pg.K_RIGHT]:
+                pisicao_x_imagem_nivel_dois += speed
+                move_sound.play(maxtime=50)
+            if keyboard[pg.K_LEFT]:
+                pisicao_x_imagem_nivel_dois -= speed
+                move_sound.play(maxtime=50)
+            if keyboard[pg.K_UP]:
+                angle2 += 5
+                move_sound.play(maxtime=50)
+            if keyboard[pg.K_DOWN]:
+                angle2 -= 5
+                move_sound.play(maxtime=50)
 
         current_image_nivel_2 = pg.transform.rotate(personagem_nivel_dois_size, angle2)
         rect = current_image_nivel_2.get_rect(center=(pisicao_x_imagem_nivel_dois, pisicao_y_imagem_nivel_dois))
@@ -413,33 +406,31 @@ while running:
         screen.blit(finish, (190, 10))
         screen.blit(shots_text, (10, 75))
 
-        if not paused:
-            if started:
-                if current_time - last_time > 1000:
-                    balls.append(BallGame(screen, colors['RosaClaro'], (width, random.randint(0, height-350)), 8))
-                    last_time = current_time
-                    ball_game_count += 1
+        if not paused and started:
+            if update_timer():
+                balls.append(BallGame(screen, colors['RosaClaro'], (width, random.randint(0, height-350)), 8))
+                ball_game_count += 1
 
-                for ball in balls:
-                    ball.move_balls(speed_balls)
-                    ball.draw_balls()
+            for ball in balls:
+                ball.move_balls(speed_balls)
+                ball.draw_balls()
 
-                for bullet in bullets[:]:
-                    bullet.move_bullet()
-                    bullet.draw_bullet()
+            for bullet in bullets[:]:
+                bullet.move_bullet()
+                bullet.draw_bullet()
 
-                    if bullet.is_off_screen(width, height):
+                if bullet.is_off_screen(width, height):
+                    bullets.remove(bullet)
+
+            for bullet in bullets[:]:
+                for ball in balls[:]:
+                    if bullet.collide(ball):
+                        balls.remove(ball)
+                        count_ball += 1
                         bullets.remove(bullet)
-
-                for bullet in bullets[:]:
-                    for ball in balls[:]:
-                        if bullet.collide(ball):
-                            balls.remove(ball)
-                            count_ball += 1
-                            bullets.remove(bullet)
-                            score += 10
-                            collision_sound.play()
-                            break
+                        score += 10
+                        collision_sound.play()
+                        break
     if time_game == 0 or end_game:
         historico = True
 # ===============================================================================================================================================
