@@ -89,6 +89,7 @@ show_return = False
 time_game = 180
 name = 'Mikenson Thomas'
 bullet_move_count = 0
+nive_1 = False
 nivel_2 = False
 nivel_3 = False
 historico = False
@@ -275,10 +276,10 @@ while running:
                     score += 10
                     collision_sound.play()
                     break
-    if time_game == 120:
+    if 120 <= time_game <= 180:
         if 45 <= count_ball <= 65:
             nivel_2 = True
-        else:
+        elif time_game == 120:
             historico = True
     if end_game:
         historico = True
@@ -288,8 +289,6 @@ while running:
         count_2 = font_score.render(f"Acertou: {count_ball} em {ball_game_count} ", True, colors['Laranja'])
 
         if not paused and started: 
-            if update_timer():
-                time_to_play = font_score.render(f"Tempo: {time_game} ", True, colors['Laranja']) 
 
             if keyboard[pg.K_RIGHT]:
                 pisicao_x_imagem_nivel_dois += speed
@@ -330,8 +329,10 @@ while running:
 
         if not paused and started:
             if update_timer():
-                balls.append(BallGame(screen, colors['RosaClaro'], (width, random.randint(0, height-350)), 8))
-                ball_game_count += 1
+                for _ in range(2):
+                    balls.append(BallGame(screen, colors['RosaClaro'], (width, random.randint(0, height-350)), 8))
+                    ball_game_count += 1
+            time_to_play = font_score.render(f"Tempo: {time_game} ", True, colors['Laranja']) 
 
             for ball in balls:
                 ball.move_balls(speed_balls)
@@ -353,10 +354,10 @@ while running:
                         score += 10
                         collision_sound.play()
                         break
-    if time_game == 60:
+    if 60 <= time_game <= 120:
         if 90 <= count_ball <= 130:
             nivel_3 = True
-        else:
+        elif time_game == 60:
             historico = True
     if end_game:
         historico = True
@@ -366,8 +367,6 @@ while running:
         count_2 = font_score.render(f"Acertou: {count_ball} em {ball_game_count} ", True, colors['Laranja'])
 
         if not paused and started: 
-            if update_timer():
-                time_to_play = font_score.render(f"Tempo: {time_game} ", True, colors['Laranja'])
 
             if keyboard[pg.K_RIGHT]:
                 pisicao_x_imagem_nivel_dois += speed
@@ -408,8 +407,10 @@ while running:
 
         if not paused and started:
             if update_timer():
-                balls.append(BallGame(screen, colors['RosaClaro'], (width, random.randint(0, height-350)), 8))
-                ball_game_count += 1
+                for _ in range(3):
+                    balls.append(BallGame(screen, colors['RosaClaro'], (width, random.randint(0, height-350)), 8))
+                    ball_game_count += 1
+            time_to_play = font_score.render(f"Tempo: {time_game} ", True, colors['Laranja']) 
 
             for ball in balls:
                 ball.move_balls(speed_balls)
@@ -431,8 +432,11 @@ while running:
                         score += 10
                         collision_sound.play()
                         break
-    if time_game == 0 or end_game:
-        historico = True
+    if 0 <= time_game <= 60:
+        if count_ball >= 135:
+            historico = True
+        elif time_game == 0:
+            historico = True
 # ===============================================================================================================================================
     if historico:
         paused = True
