@@ -89,8 +89,8 @@ continueGame = False
 end_game = False
 show_return = False
 time_game_1 = 60
-time_game_2 = 50
-time_game_3 = 40
+time_game_2 = 60
+time_game_3 = 60
 name = 'Mikenson Thomas'
 bullet_move_count = 0
 historico = False
@@ -132,7 +132,7 @@ def handle_global_input(event):
         running = False
 
 def update_timer_1():
-    global last_time_1, time_game_1, end_game
+    global last_time_1, time_game_1
 
     current_time_1 = pg.time.get_ticks()
 
@@ -144,7 +144,7 @@ def update_timer_1():
     return False
 
 def update_timer_2():
-    global last_time_2, time_game_2, end_game
+    global last_time_2, time_game_2
 
     current_time_2 = pg.time.get_ticks()
 
@@ -157,7 +157,7 @@ def update_timer_2():
 
 
 def update_timer_3():
-    global last_time_3, time_game_3, end_game
+    global last_time_3, time_game_3
 
     current_time_3 = pg.time.get_ticks()
 
@@ -309,8 +309,12 @@ while running:
                         collision_sound.play()
                         break
     if time_game_1 == 0:
-        nivel_atual = 2
-        time_game_1 = 60
+        if count_ball >= (ball_game_count * 0.7):
+            nivel_atual = 2
+            time_game_1 = 60
+        else:
+            historico = True
+            time_game_1 = 60
     if end_game:
         historico = True
 # ===============================================================================================================================================
@@ -318,6 +322,9 @@ while running:
         tick_2 = update_timer_2()
         pontuation_2 = font_score.render(f"Pontuação: {score} ", True, colors['Laranja'])
         count_2 = font_score.render(f"Acertou: {count_ball} em {ball_game_count} ", True, colors['Laranja'])
+        shots_text  = font_score.render(f"Tiros: {bullet_move_count}", True, colors['Vermelho'])
+        historic_game_ball = font_score.render(f"Em: {ball_game_count} bolinhas você acertou: {count_ball} ", True, colors['Laranja'])
+        historic_game_score = font_score.render(f"Você ganhou: {score} pontos ", True, colors['Laranja'])
 
         if not paused and started: 
 
@@ -386,8 +393,11 @@ while running:
                         collision_sound.play()
                         break
     if time_game_2 == 0:
-        nivel_atual = 3
-        time_game_2 = 40
+        if count_ball >= (ball_game_count * 0.7):
+            nivel_atual = 3
+            time_game_2 = 60
+        else:
+            historico = True
     if end_game:
         historico = True
 # ===============================================================================================================================================
@@ -395,6 +405,9 @@ while running:
         tick_3 = update_timer_3()
         pontuation_2 = font_score.render(f"Pontuação: {score} ", True, colors['Laranja'])
         count_2 = font_score.render(f"Acertou: {count_ball} em {ball_game_count} ", True, colors['Laranja'])
+        shots_text  = font_score.render(f"Tiros: {bullet_move_count}", True, colors['Vermelho'])
+        historic_game_ball = font_score.render(f"Em: {ball_game_count} bolinhas você acertou: {count_ball} ", True, colors['Laranja'])
+        historic_game_score = font_score.render(f"Você ganhou: {score} pontos ", True, colors['Laranja'])
 
         if not paused and started: 
 
@@ -463,10 +476,11 @@ while running:
                         collision_sound.play()
                         break
     if time_game_3 == 0:
+        nivel_atual = 4
         historico = True
         time_game_3 = 40
 # ===============================================================================================================================================
-    if historico:
+    if nivel_atual == 4 or historico:
         paused = True
         screen.blit(bg_imagem, (0, 0))
         screen.blit(historic_game_name, (360, 300))
@@ -476,7 +490,7 @@ while running:
             screen.blit(return_to_start, (10, 10))
         screen.blit(close_window, (220, 10))
 
-        if 135 <= count_ball <= 195:
+        if count_ball >= (ball_game_count * 0.7):
             screen.blit(coungratulation, (360, 400))
         else:
             screen.blit(not_coungratulation, (360, 400))
