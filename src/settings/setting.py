@@ -19,3 +19,7 @@ fade_direction = 1
 pisicao_x_imagem_nivel_dois = 90
 pisicao_y_imagem_nivel_dois = 600
 angle2 = -10
+gatinho_x = 750
+gatinho_y = 300
+vel_x = -80
+vel_y = -80

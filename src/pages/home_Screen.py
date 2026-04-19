@@ -20,7 +20,11 @@ from src.settings.setting import (
     fade_direction,
     pisicao_x_imagem_nivel_dois,
     pisicao_y_imagem_nivel_dois,
-    angle2
+    angle2,
+    gatinho_x,
+    gatinho_y,
+    vel_x,
+    vel_y
 )
 from src.pages.ball import BallGame
 from src.pages.bullet import BulletGame
@@ -54,6 +58,11 @@ bg_image_path2 = os.path.join(base_dir, '..', 'assets', 'background_image.jpg')
 load_bg2_image_load = pg.image.load(bg_image_path2)
 load_bg2_image = pg.transform.scale(load_bg2_image_load, (width, height))
 
+# Imagem de historico
+gatinho_image = os.path.join(base_dir, '..', 'assets', 'gatinho.png')
+gatinho_image_load = pg.image.load(gatinho_image)
+gatinho_image_load_size = pg.transform.scale(gatinho_image_load, (550, 470))
+
 personagem_nivel_dois = os.path.join(base_dir, '..', 'assets', 'imagem_nivel2.png')
 personagem_nivel_dois_load = pg.image.load(personagem_nivel_dois)
 largura, altura = personagem_nivel_dois_load.get_size()
@@ -77,6 +86,7 @@ pg.mixer.music.play(-1)
 last_time_1 = pg.time.get_ticks()
 last_time_2 = pg.time.get_ticks()
 last_time_3 = pg.time.get_ticks()
+last_time_gatinho = pg.time.get_ticks()
 balls = []
 bullets  = []
 score = 0
@@ -88,9 +98,9 @@ finished = False
 continueGame = False
 end_game = False
 show_return = False
-time_game_1 = 60
-time_game_2 = 60
-time_game_3 = 60
+time_game_1 = 20
+time_game_2 = 20
+time_game_3 = 20
 name = 'Mikenson Thomas'
 bullet_move_count = 0
 historico = False
@@ -482,6 +492,11 @@ while running:
 # ===============================================================================================================================================
     if nivel_atual == 4 or historico:
         paused = True
+
+        largura_gatinho = gatinho_image_load_size.get_width()
+        altura_gatinho = gatinho_image_load_size.get_height()
+
+        current_image_gatinho = pg.time.get_ticks()
         screen.blit(bg_imagem, (0, 0))
         screen.blit(historic_game_name, (360, 300))
         screen.blit(historic_game_ball, (360, 200))
@@ -492,6 +507,30 @@ while running:
 
         if count_ball >= (ball_game_count * 0.7):
             screen.blit(coungratulation, (360, 400))
+            screen.blit(gatinho_image_load_size, (gatinho_x, gatinho_y))
+
+            if current_image_gatinho - last_time_gatinho > 500:
+                gatinho_x += vel_x
+                gatinho_y += vel_y
+
+                last_time_gatinho = current_image_gatinho
+
+                if gatinho_x <= 0:
+                    gatinho_x = 0
+                    vel_x *= -1
+
+                elif gatinho_x >= width - largura_gatinho:
+                    gatinho_x = width - largura_gatinho
+                    vel_x *= -1
+
+                if gatinho_y <= 0:
+                    gatinho_y = 0
+                    vel_y *= -1
+
+                elif gatinho_y >= height - altura_gatinho:
+                    gatinho_y = height - altura_gatinho
+                    vel_y *= -1
+            
         else:
             screen.blit(not_coungratulation, (360, 400))
                 
