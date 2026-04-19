@@ -63,6 +63,10 @@ gatinho_image = os.path.join(base_dir, '..', 'assets', 'gatinho.png')
 gatinho_image_load = pg.image.load(gatinho_image)
 gatinho_image_load_size = pg.transform.scale(gatinho_image_load, (550, 470))
 
+gatinho_image_pngtree = os.path.join(base_dir, '..', 'assets', 'pngtree.png')
+gatinho_image_load_pngtree = pg.image.load(gatinho_image_pngtree)
+gatinho_image_load_size_pngtree = pg.transform.scale(gatinho_image_load_pngtree, (550, 470))
+
 personagem_nivel_dois = os.path.join(base_dir, '..', 'assets', 'imagem_nivel2.png')
 personagem_nivel_dois_load = pg.image.load(personagem_nivel_dois)
 largura, altura = personagem_nivel_dois_load.get_size()
@@ -496,6 +500,9 @@ while running:
         largura_gatinho = gatinho_image_load_size.get_width()
         altura_gatinho = gatinho_image_load_size.get_height()
 
+        pngtree_largura_gatinho = gatinho_image_load_size_pngtree.get_width()
+        pngtree_altura_gatinho = gatinho_image_load_size_pngtree.get_height()
+
         current_image_gatinho = pg.time.get_ticks()
         screen.blit(bg_imagem, (0, 0))
         screen.blit(historic_game_name, (360, 300))
@@ -533,7 +540,29 @@ while running:
             
         else:
             screen.blit(not_coungratulation, (360, 400))
-                
+            screen.blit(gatinho_image_load_size_pngtree, (gatinho_x, gatinho_y))
+
+            if current_image_gatinho - last_time_gatinho > 500:
+                gatinho_x += vel_x
+                gatinho_y += vel_y
+
+                last_time_gatinho = current_image_gatinho
+
+                if gatinho_x <= 0:
+                    gatinho_x = 0
+                    vel_x *= -1
+
+                elif gatinho_x >= width - pngtree_largura_gatinho:
+                    gatinho_x = width - pngtree_largura_gatinho
+                    vel_x *= -1
+
+                if gatinho_y <= 0:
+                    gatinho_y = 0
+                    vel_y *= -1
+
+                elif gatinho_y >= height - pngtree_altura_gatinho:
+                    gatinho_y = height - pngtree_altura_gatinho
+                    vel_y *= -1
     pg.display.flip()
 
     clock.tick(15)
