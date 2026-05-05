@@ -94,7 +94,6 @@ show_return = False
 time_game_1 = 20
 time_game_2 = 20
 time_game_3 = 20
-name = 'Mikenson Thomas'
 bullet_move_count = 0
 historico = False
 nivel_atual = 1
@@ -171,7 +170,37 @@ def update_timer_3():
         return True
     return False
 
+def get_name():
+    name = ""
+    writing = True
+
+    while writing:
+        screen.fill(colors['preto'])
+        text = font.render("Digite seu nome:", True, colors['Branco'])
+        screen.blit(text, (180, 300))
+
+        name_txt = font.render(name, True, colors['Azul'])
+        screen.blit(name_txt, (200, 350))
+
+        pg.display.update()
+
+        for evento in pg.event.get():
+            if evento.type == pg.QUIT:
+                pg.quit()
+                exit()
+
+            if evento.type == pg.KEYDOWN:
+                if evento.key == pg.K_RETURN and name != "":
+                    writing = False
+                elif evento.key == pg.K_BACKSPACE:
+                    name = name[:-1]
+                else:
+                    name += evento.unicode
+
+    return name
+
 running = True
+get_name_player = get_name()
 
 while running:
 
@@ -228,7 +257,7 @@ while running:
         count = font_score.render(f"Acertou: {count_ball} em {ball_game_count} ", True, colors['Laranja'])
 
         # Históricos
-        historic_game_name = font_score.render(f"Nome: {name} ", True, colors['Laranja'])
+        # historic_game_name = font_score.render(f"Nome: {name} ", True, colors['Laranja'])
         historic_game_ball = font_score.render(f"Em: {ball_game_count} bolinhas você acertou: {count_ball} ", True, colors['Laranja'])
         historic_game_score = font_score.render(f"Você ganhou: {score} pontos ", True, colors['Laranja'])
         coungratulation = font_score.render("Parabéns, você Ganhou o jogo", True, colors['Laranja'])
@@ -467,7 +496,8 @@ while running:
 
         current_image_gatinho = pg.time.get_ticks()
         screen.blit(bg_imagem, (0, 0))
-        screen.blit(historic_game_name, (360, 300))
+        name_surface = font_score.render(f"Nome: {get_name_player}", True, colors['Laranja'])
+        screen.blit(name_surface, (360, 300))
         screen.blit(historic_game_ball, (360, 200))
         screen.blit(historic_game_score, (360, 100))
         if show_return:
