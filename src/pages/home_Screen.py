@@ -18,9 +18,6 @@ from src.settings.setting import (
     alpha,
     fade_speed,
     fade_direction,
-    pisicao_x_imagem_nivel_dois,
-    pisicao_y_imagem_nivel_dois,
-    angle2,
     gatinho_x,
     gatinho_y,
     vel_x,
@@ -66,14 +63,6 @@ gatinho_image_load_size = pg.transform.scale(gatinho_image_load, (550, 470))
 gatinho_image_pngtree = os.path.join(base_dir, '..', 'assets', 'pngtree.png')
 gatinho_image_load_pngtree = pg.image.load(gatinho_image_pngtree)
 gatinho_image_load_size_pngtree = pg.transform.scale(gatinho_image_load_pngtree, (550, 470))
-
-personagem_nivel_dois = os.path.join(base_dir, '..', 'assets', 'imagem_nivel2.png')
-personagem_nivel_dois_load = pg.image.load(personagem_nivel_dois)
-largura, altura = personagem_nivel_dois_load.get_size()
-personagem_nivel_dois_size = pg.transform.smoothscale(personagem_nivel_dois_load, (largura //2, altura // 2))
-rot_imagem = pg.transform.rotate(personagem_nivel_dois_size, angle2)
-current_image_nivel_2 = rot_imagem
-half_width_image_nivel_2 = current_image_nivel_2.get_width() // 2
 
 # imagens da terceira tela
 bg_image_path3 = os.path.join(base_dir, '..', 'assets', 'background_image_3.jpg')
@@ -197,19 +186,13 @@ while running:
             if not paused and started:
                 if event.key == pg.K_SPACE:
 
-                    gun_tip_offset_1 = (-30, 40)
+                    gun_tip_offset_1 = (-20, 20)
                     gun_tip_offset_2 = (-10, -70)
 
-                    if nivel_atual == 1:
-                        offset_x, offset_y = gun_tip_offset_1
-                        rad = math.radians(angle)
-                        center_x = position_x
-                        center_y = position_y
-                    elif nivel_atual in (2, 3):
-                        offset_x, offset_y = gun_tip_offset_2
-                        rad = math.radians(angle2 + 130)
-                        center_x = pisicao_x_imagem_nivel_dois
-                        center_y = pisicao_y_imagem_nivel_dois
+                    offset_x, offset_y = gun_tip_offset_1
+                    rad = math.radians(angle)
+                    center_x = position_x
+                    center_y = position_y
 
                     rotated_x = offset_x * math.cos(rad) - offset_y * math.sin(rad)
                     rotated_y = offset_x * math.sin(rad) + offset_y * math.cos(rad)
@@ -262,13 +245,6 @@ while running:
             if keyboard[pg.K_LEFT]:
                 position_x -= speed
                 move_sound.play(maxtime=50)
-            if keyboard[pg.K_UP]:
-                angle += 5
-                move_sound.play(maxtime=50)
-            if keyboard[pg.K_DOWN]:
-                angle -= 5
-                move_sound.play(maxtime=50)
-            current_image = pg.transform.rotate(image_size, angle)
 
         rect = current_image.get_rect(center=(position_x, position_y))
 
@@ -286,7 +262,7 @@ while running:
             screen.blit(paused_game, (360, 300))
             screen.blit(continue_game, (300, 10))
 
-        screen.blit(time_to_play_1, (10, 40))   
+        screen.blit(time_to_play_1, (10, 40))
         screen.blit(title, (250, 50))
         screen.blit(pontuation, (950, 550))
         screen.blit(count, (950, 650))
@@ -343,28 +319,21 @@ while running:
         if not paused and started: 
 
             if keyboard[pg.K_RIGHT]:
-                pisicao_x_imagem_nivel_dois += speed
+                position_x += speed
                 move_sound.play(maxtime=50)
             if keyboard[pg.K_LEFT]:
-                pisicao_x_imagem_nivel_dois -= speed
+                position_x -= speed
                 move_sound.play(maxtime=50)
-            if keyboard[pg.K_UP]:
-                angle2 += 5
-                move_sound.play(maxtime=50)
-            if keyboard[pg.K_DOWN]:
-                angle2 -= 5
-                move_sound.play(maxtime=50)
+        
+        rect = current_image.get_rect(center=(position_x, position_y))
 
-        current_image_nivel_2 = pg.transform.rotate(personagem_nivel_dois_size, angle2)
-        rect = current_image_nivel_2.get_rect(center=(pisicao_x_imagem_nivel_dois, pisicao_y_imagem_nivel_dois))
-
-        if pisicao_x_imagem_nivel_dois - half_width_image_nivel_2 < 0:
-            pisicao_x_imagem_nivel_dois = half_width_image_nivel_2
-        if pisicao_x_imagem_nivel_dois + half_width_image_nivel_2 > width:
-            pisicao_x_imagem_nivel_dois = width - half_width_image_nivel_2
+        if position_x - half_width < 0:
+            position_x = half_width
+        if position_x + half_width > width:
+            position_x = width - half_width
 
         screen.blit(load_bg2_image, (0, 0))
-        screen.blit(current_image_nivel_2, rect)
+        screen.blit(current_image, rect)
         screen.blit(title_2, (250, 50))
         screen.blit(pontuation_2, (950, 350))
         screen.blit(count_2, (950, 300))
@@ -426,28 +395,21 @@ while running:
         if not paused and started: 
 
             if keyboard[pg.K_RIGHT]:
-                pisicao_x_imagem_nivel_dois += speed
+                position_x += speed
                 move_sound.play(maxtime=50)
             if keyboard[pg.K_LEFT]:
-                pisicao_x_imagem_nivel_dois -= speed
+                position_x -= speed
                 move_sound.play(maxtime=50)
-            if keyboard[pg.K_UP]:
-                angle2 += 5
-                move_sound.play(maxtime=50)
-            if keyboard[pg.K_DOWN]:
-                angle2 -= 5
-                move_sound.play(maxtime=50)
+           
+        rect = current_image.get_rect(center=(position_x, position_y))
 
-        current_image_nivel_2 = pg.transform.rotate(personagem_nivel_dois_size, angle2)
-        rect = current_image_nivel_2.get_rect(center=(pisicao_x_imagem_nivel_dois, pisicao_y_imagem_nivel_dois))
-
-        if pisicao_x_imagem_nivel_dois - half_width_image_nivel_2 < 0:
-            pisicao_x_imagem_nivel_dois = half_width_image_nivel_2
-        if pisicao_x_imagem_nivel_dois + half_width_image_nivel_2 > width:
-            pisicao_x_imagem_nivel_dois = width - half_width_image_nivel_2
+        if position_x - half_width < 0:
+            position_x = half_width
+        if position_x + half_width > width:
+            position_x = width - half_width
 
         screen.blit(load_bg3_image, (0, 0))
-        screen.blit(current_image_nivel_2, rect)
+        screen.blit(current_image, rect)
         screen.blit(title_3, (250, 50))
         screen.blit(pontuation_2, (950, 350))
         screen.blit(count_2, (950, 300))
