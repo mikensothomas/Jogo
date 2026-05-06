@@ -200,7 +200,7 @@ def get_name():
     return name
 
 running = True
-get_name_player = get_name()
+get_player_name = get_name()
 
 while running:
 
@@ -496,7 +496,7 @@ while running:
 
         current_image_gatinho = pg.time.get_ticks()
         screen.blit(bg_imagem, (0, 0))
-        name_surface = font_score.render(f"Nome: {get_name_player}", True, colors['Laranja'])
+        name_surface = font_score.render(f"Nome: {get_player_name}", True, colors['Laranja'])
         screen.blit(name_surface, (360, 300))
         screen.blit(historic_game_ball, (360, 200))
         screen.blit(historic_game_score, (360, 100))
