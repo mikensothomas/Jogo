@@ -25,6 +25,7 @@ from src.settings.setting import (
 )
 from src.pages.ball import BallGame
 from src.pages.bullet import BulletGame
+from src.pages.timer import Timer_game
 
 pg.init()
 screen = pg.display.set_mode((width, height))
@@ -76,9 +77,6 @@ shoot_sound = pg.mixer.Sound(sound_shoot)
 collision_sound = pg.mixer.Sound(sound_fille_Collision)
 pg.mixer.music.load(music_fille)
 pg.mixer.music.play(-1)
-last_time_1 = pg.time.get_ticks()
-last_time_2 = pg.time.get_ticks()
-last_time_3 = pg.time.get_ticks()
 last_time_gatinho = pg.time.get_ticks()
 balls = []
 bullets  = []
@@ -91,9 +89,9 @@ finished = False
 continueGame = False
 end_game = False
 show_return = False
-time_game_1 = 20
-time_game_2 = 20
-time_game_3 = 20
+timer1 = Timer_game(20)
+timer2 = Timer_game(20)
+timer3 = Timer_game(20)
 bullet_move_count = 0
 historico = False
 nivel_atual = 1
@@ -114,9 +112,9 @@ start = font_menu.render("I: Iniciar", True, colors['Verde'])
 pause = font_menu.render("P: Pausar", True, colors['Amarelo'])
 finish = font_menu.render("T: Terminar", True, colors['Vermelho'])
 continue_game = font_menu.render("C: Continuar", True, colors['Laranja'])
-time_to_play_1 = font_score.render(f"Tempo: {time_game_1} ", True, colors['Laranja'])
-time_to_play_2 = font_score.render(f"Tempo: {time_game_2} ", True, colors['Laranja'])
-time_to_play_3 = font_score.render(f"Tempo: {time_game_3} ", True, colors['Laranja'])
+time_to_play_1 = font_score.render(f"Tempo: {timer1.tempo} ", True, colors['Laranja'])
+time_to_play_2 = font_score.render(f"Tempo: {timer2.tempo} ", True, colors['Laranja'])
+time_to_play_3 = font_score.render(f"Tempo: {timer3.tempo} ", True, colors['Laranja'])
 
 def handle_global_input(event):
     global paused, started, end_game, running, historico
@@ -132,43 +130,6 @@ def handle_global_input(event):
         historico = True
     elif event.key == pg.K_f:
         running = False
-
-def update_timer_1():
-    global last_time_1, time_game_1
-
-    current_time_1 = pg.time.get_ticks()
-
-    if current_time_1 - last_time_1 > 1000:
-        last_time_1 = current_time_1
-        time_game_1 -= 1
-
-        return True
-    return False
-
-def update_timer_2():
-    global last_time_2, time_game_2
-
-    current_time_2 = pg.time.get_ticks()
-
-    if current_time_2 - last_time_2 > 1000:
-        last_time_2 = current_time_2
-        time_game_2 -= 1
-
-        return True
-    return False
-
-
-def update_timer_3():
-    global last_time_3, time_game_3
-
-    current_time_3 = pg.time.get_ticks()
-
-    if current_time_3 - last_time_3 > 1000:
-        last_time_3 = current_time_3
-        time_game_3 -= 1
-
-        return True
-    return False
 
 def get_name():
     name = ""
@@ -301,7 +262,10 @@ while running:
         screen.blit(shots_text, (10, 75))
         
         if not paused and started:
-            tick_1 = update_timer_1()
+
+            tick_1 = timer1.update()
+            time_game_1 = timer1.tempo
+
             if tick_1:
                 balls.append(BallGame(screen, colors['RosaClaro'], (width, random.randint(0, height-350)), 8))
                 ball_game_count += 1
@@ -327,18 +291,21 @@ while running:
                         score += 10
                         collision_sound.play()
                         break
-    if time_game_1 == 0:
+    if timer1.tempo == 0:
         if count_ball >= (ball_game_count * 0.7):
             nivel_atual = 2
-            time_game_1 = 60
+            timer1.tempo = 60
         else:
             historico = True
-            time_game_1 = 60
+            timer1.tempo = 60
     if end_game:
         historico = True
 # ===============================================================================================================================================
     if nivel_atual == 2:
-        tick_2 = update_timer_2()
+
+        tick_2 = timer2.update()
+        time_game_2 = timer2.tempo
+
         pontuation_2 = font_score.render(f"Pontuação: {score} ", True, colors['Laranja'])
         count_2 = font_score.render(f"Acertou: {count_ball} em {ball_game_count} ", True, colors['Laranja'])
         shots_text  = font_score.render(f"Tiros: {bullet_move_count}", True, colors['Vermelho'])
@@ -404,17 +371,20 @@ while running:
                         score += 10
                         collision_sound.play()
                         break
-    if time_game_2 == 0:
+    if timer2.tempo == 0:
         if count_ball >= (ball_game_count * 0.7):
             nivel_atual = 3
-            time_game_2 = 60
+            timer2.tempo = 60
         else:
             historico = True
     if end_game:
         historico = True
 # ===============================================================================================================================================
     if nivel_atual == 3:
-        tick_3 = update_timer_3()
+
+        tick_3 = timer3.update()
+        time_game_3 = timer3.tempo
+
         pontuation_2 = font_score.render(f"Pontuação: {score} ", True, colors['Laranja'])
         count_2 = font_score.render(f"Acertou: {count_ball} em {ball_game_count} ", True, colors['Laranja'])
         shots_text  = font_score.render(f"Tiros: {bullet_move_count}", True, colors['Vermelho'])
@@ -480,10 +450,10 @@ while running:
                         score += 10
                         collision_sound.play()
                         break
-    if time_game_3 == 0:
+    if timer3.tempo == 0:
         nivel_atual = 4
         historico = True
-        time_game_3 = 40
+        timer3.tempo = 60
 # ===============================================================================================================================================
     if nivel_atual == 4 or historico:
         paused = True
