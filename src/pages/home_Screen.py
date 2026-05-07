@@ -26,6 +26,7 @@ from src.settings.setting import (
 from src.pages.ball import BallGame
 from src.pages.bullet import BulletGame
 from src.pages.timer import Timer_game
+from src.pages.name import PlayerName
 
 pg.init()
 screen = pg.display.set_mode((width, height))
@@ -89,9 +90,6 @@ finished = False
 continueGame = False
 end_game = False
 show_return = False
-timer1 = Timer_game(20)
-timer2 = Timer_game(20)
-timer3 = Timer_game(20)
 bullet_move_count = 0
 historico = False
 nivel_atual = 1
@@ -112,6 +110,12 @@ start = font_menu.render("I: Iniciar", True, colors['Verde'])
 pause = font_menu.render("P: Pausar", True, colors['Amarelo'])
 finish = font_menu.render("T: Terminar", True, colors['Vermelho'])
 continue_game = font_menu.render("C: Continuar", True, colors['Laranja'])
+
+timer1 = Timer_game(20)
+timer2 = Timer_game(20)
+timer3 = Timer_game(20)
+player = PlayerName(screen, font)
+
 time_to_play_1 = font_score.render(f"Tempo: {timer1.tempo} ", True, colors['Laranja'])
 time_to_play_2 = font_score.render(f"Tempo: {timer2.tempo} ", True, colors['Laranja'])
 time_to_play_3 = font_score.render(f"Tempo: {timer3.tempo} ", True, colors['Laranja'])
@@ -131,37 +135,9 @@ def handle_global_input(event):
     elif event.key == pg.K_f:
         running = False
 
-def get_name():
-    name = ""
-    writing = True
-
-    while writing:
-        screen.fill(colors['preto'])
-        text = font.render("Digite seu nome:", True, colors['Branco'])
-        screen.blit(text, (180, 300))
-
-        name_txt = font.render(name, True, colors['Azul'])
-        screen.blit(name_txt, (200, 350))
-
-        pg.display.update()
-
-        for evento in pg.event.get():
-            if evento.type == pg.QUIT:
-                pg.quit()
-                exit()
-
-            if evento.type == pg.KEYDOWN:
-                if evento.key == pg.K_RETURN and name != "":
-                    writing = False
-                elif evento.key == pg.K_BACKSPACE:
-                    name = name[:-1]
-                else:
-                    name += evento.unicode
-
-    return name
 
 running = True
-get_player_name = get_name()
+get_player_name = player.get_name()
 
 while running:
 
@@ -218,7 +194,6 @@ while running:
         count = font_score.render(f"Acertou: {count_ball} em {ball_game_count} ", True, colors['Laranja'])
 
         # Históricos
-        # historic_game_name = font_score.render(f"Nome: {name} ", True, colors['Laranja'])
         historic_game_ball = font_score.render(f"Em: {ball_game_count} bolinhas você acertou: {count_ball} ", True, colors['Laranja'])
         historic_game_score = font_score.render(f"Você ganhou: {score} pontos ", True, colors['Laranja'])
         coungratulation = font_score.render("Parabéns, você Ganhou o jogo", True, colors['Laranja'])

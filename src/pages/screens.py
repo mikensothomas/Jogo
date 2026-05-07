@@ -1,2 +1,2 @@
 class Telas:
-    
+    pass
