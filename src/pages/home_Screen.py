@@ -94,16 +94,11 @@ show_return = False
 bullet_move_count = 0
 historico = False
 nivel_atual = 1
-tick_1 = False
-tick_2 = False
-tick_3 = False
+tick = False
 
 font = pg.font.SysFont("Arial", 60)
 font_menu = pg.font.SysFont("Arial", 25)
 font_score = pg.font.SysFont("Arial", 30)
-# title = font.render("REBELIÃO DAS BOLINHAS NÍVEL 1", True, colors['Laranja'])
-# title_2 = font.render("REBELIÃO DAS BOLINHAS NÍVEL 2", True, colors['Laranja'])
-# title_3 = font.render("REBELIÃO DAS BOLINHAS NÍVEL 3", True, colors['Laranja'])
 paused_game = font.render("JOGO PAUSADO", True, colors['Amarelo'])
 pg.display.set_caption('REBELIÃO DAS BOLINHAS')
 
@@ -122,10 +117,6 @@ level2 = Level(2, 20, 2, load_bg2_image)
 level3 = Level(3, 20, 3, load_bg3_image)
 
 levels = { 1: level1, 2: level2, 3: level3 }
-
-# time_to_play_1 = font_score.render(f"Tempo: {timer1.tempo} ", True, colors['Laranja'])
-# time_to_play_2 = font_score.render(f"Tempo: {timer2.tempo} ", True, colors['Laranja'])
-# time_to_play_3 = font_score.render(f"Tempo: {timer3.tempo} ", True, colors['Laranja'])
 
 def handle_global_input(event):
     global paused, started, end_game, running, historico
@@ -148,10 +139,10 @@ get_player_name = player.get_name()
 
 while running:
 
-    current_level = levels[nivel_atual]
-    title = font.render(f"REBELIÃO DAS BOLINHAS NÍVEL {current_level.numero}",True,colors['Laranja'])
-
-    time_text = font_score.render(f"Tempo: {current_level.timer.tempo}",True,colors['Laranja'])
+    current_level = levels.get(nivel_atual)
+    if current_level:
+        title = font.render(f"REBELIÃO DAS BOLINHAS NÍVEL {current_level.numero}",True,colors['Laranja'])
+        time_text = font_score.render(f"Tempo: {current_level.timer.tempo}",True,colors['Laranja'])
 
     for event in pg.event.get():
         if event.type == pg.QUIT:
@@ -198,254 +189,6 @@ while running:
             fade_direction = 1
             
     title.set_alpha(alpha)
-    # title_2.set_alpha(alpha)
-    # title_3.set_alpha(alpha)
-
-#     if current_level:
-#         pontuation = font_score.render(f"Pontuação: {score} ", True, colors['Laranja'])
-#         count = font_score.render(f"Acertou: {count_ball} em {ball_game_count} ", True, colors['Laranja'])
-
-#         # Históricos
-#         historic_game_ball = font_score.render(f"Em: {ball_game_count} bolinhas você acertou: {count_ball} ", True, colors['Laranja'])
-#         historic_game_score = font_score.render(f"Você ganhou: {score} pontos ", True, colors['Laranja'])
-#         coungratulation = font_score.render("Parabéns, você Ganhou o jogo", True, colors['Laranja'])
-#         not_coungratulation = font_score.render("Você perdeu a partida, pode recomeçar o jogo", True, colors['Vermelho'])
-#         return_to_start = font_score.render("V: Voltar ao início", True, colors['Laranja'])
-#         close_window = font_score.render("F: Fechar o jogo", True, colors['Vermelho'])
-
-#         shots_text  = font_score.render(f"Tiros: {bullet_move_count}", True, colors['Vermelho'])
-
-#         if not paused and started:
-#             if keyboard[pg.K_RIGHT]:
-#                 position_x += speed
-#                 move_sound.play(maxtime=50)
-#             if keyboard[pg.K_LEFT]:
-#                 position_x -= speed
-#                 move_sound.play(maxtime=50)
-
-#         rect = current_image.get_rect(center=(position_x, position_y))
-
-#         if position_x - half_width < 0:
-#             position_x = half_width
-
-#         if position_x + half_width > width:
-#             position_x = width - half_width
-
-#         current_level.draw_background(screen)
-
-#         screen.blit(current_image, rect)
-
-#         if paused:
-#             screen.blit(paused_game, (360, 300))
-#             screen.blit(continue_game, (300, 10))
-
-#         screen.blit(time_text, (10, 40))
-#         # screen.blit(title, (250, 50))
-#         # title = font.render(f"REBELIÃO DAS BOLINHAS NÍVEL {current_level.numero}",True,colors['Laranja'])
-
-#         screen.blit(title, (250, 50))
-#         screen.blit(pontuation, (950, 550))
-#         screen.blit(count, (950, 650))
-#         screen.blit(start, (10, 10))
-#         screen.blit(pause, (90, 10))
-#         screen.blit(finish, (190, 10))
-#         screen.blit(shots_text, (10, 75))
-        
-#         if not paused and started:
-
-#             tick = current_level.update()
-#             time_game_1 = current_level.timer.tempo
-
-#             if tick:
-#                 balls.append(BallGame(screen, colors['RosaClaro'], (width, random.randint(0, height-350)), 8))
-#                 ball_game_count += 1
-#                 time_text = font_score.render(f"Tempo: {time_game_1} ", True, colors['Laranja'])
-
-#             for ball in balls:
-#                 ball.move_balls(speed_balls)
-#                 ball.draw_balls()
-
-#             for bullet in bullets[:]:
-#                 bullet.move_bullet()
-#                 bullet.draw_bullet()
-
-#                 if bullet.is_off_screen(width, height):
-#                     bullets.remove(bullet)
-
-#             for bullet in bullets[:]:
-#                 for ball in balls[:]:
-#                     if bullet.collide(ball):
-#                         balls.remove(ball)
-#                         count_ball += 1
-#                         bullets.remove(bullet)
-#                         score += 10
-#                         collision_sound.play()
-#                         break
-#     if timer1.tempo == 0:
-#         if count_ball >= (ball_game_count * 0.7):
-#             nivel_atual = 2
-#             timer1.tempo = 60
-#         else:
-#             historico = True
-#             timer1.tempo = 60
-#     if end_game:
-#         historico = True
-# # ===============================================================================================================================================
-#     if current_level:
-
-#         tick = timer2.update()
-#         time_game_2 = timer2.tempo
-
-#         pontuation_2 = font_score.render(f"Pontuação: {score} ", True, colors['Laranja'])
-#         count_2 = font_score.render(f"Acertou: {count_ball} em {ball_game_count} ", True, colors['Laranja'])
-#         shots_text  = font_score.render(f"Tiros: {bullet_move_count}", True, colors['Vermelho'])
-#         historic_game_ball = font_score.render(f"Em: {ball_game_count} bolinhas você acertou: {count_ball} ", True, colors['Laranja'])
-#         historic_game_score = font_score.render(f"Você ganhou: {score} pontos ", True, colors['Laranja'])
-
-#         if not paused and started: 
-
-#             if keyboard[pg.K_RIGHT]:
-#                 position_x += speed
-#                 move_sound.play(maxtime=50)
-#             if keyboard[pg.K_LEFT]:
-#                 position_x -= speed
-#                 move_sound.play(maxtime=50)
-        
-#         rect = current_image.get_rect(center=(position_x, position_y))
-
-#         if position_x - half_width < 0:
-#             position_x = half_width
-#         if position_x + half_width > width:
-#             position_x = width - half_width
-
-#         screen.blit(load_bg2_image, (0, 0))
-#         screen.blit(current_image, rect)
-#         screen.blit(title, (250, 50))
-#         screen.blit(pontuation_2, (950, 350))
-#         screen.blit(count_2, (950, 300))
-
-#         if paused:
-#             screen.blit(paused_game, (360, 300))
-#             screen.blit(continue_game, (300, 10))
-
-#         screen.blit(time_text, (10, 40))   
-#         screen.blit(start, (10, 10))
-#         screen.blit(pause, (90, 10))
-#         screen.blit(finish, (190, 10))
-#         screen.blit(shots_text, (10, 75))
-
-#         if not paused and started:
-#             if tick:
-#                 # for _ in range(2):
-#                 #     balls.append(BallGame(screen, colors['RosaClaro'], (width, random.randint(0, height-350)), 8))
-#                 current_level.spawn_balls( balls, screen, width, height)
-#                 ball_game_count += 1
-#             time_text = font_score.render(f"Tempo: {time_game_2} ", True, colors['Laranja']) 
-
-#             for ball in balls:
-#                 ball.move_balls(speed_balls)
-#                 ball.draw_balls()
-
-#             for bullet in bullets[:]:
-#                 bullet.move_bullet()
-#                 bullet.draw_bullet()
-
-#                 if bullet.is_off_screen(width, height):
-#                     bullets.remove(bullet)
-
-#             for bullet in bullets[:]:
-#                 for ball in balls[:]:
-#                     if bullet.collide(ball):
-#                         balls.remove(ball)
-#                         count_ball += 1
-#                         bullets.remove(bullet)
-#                         score += 10
-#                         collision_sound.play()
-#                         break
-#     if timer2.tempo == 0:
-#         if count_ball >= (ball_game_count * 0.7):
-#             nivel_atual = 3
-#             timer2.tempo = 60
-#         else:
-#             historico = True
-#     if end_game:
-#         historico = True
-# # ===============================================================================================================================================
-#     if current_level:
-
-#         tick = timer3.update()
-#         time_game_3 = timer3.tempo
-
-#         pontuation_2 = font_score.render(f"Pontuação: {score} ", True, colors['Laranja'])
-#         count_2 = font_score.render(f"Acertou: {count_ball} em {ball_game_count} ", True, colors['Laranja'])
-#         shots_text  = font_score.render(f"Tiros: {bullet_move_count}", True, colors['Vermelho'])
-#         historic_game_ball = font_score.render(f"Em: {ball_game_count} bolinhas você acertou: {count_ball} ", True, colors['Laranja'])
-#         historic_game_score = font_score.render(f"Você ganhou: {score} pontos ", True, colors['Laranja'])
-
-#         if not paused and started: 
-
-#             if keyboard[pg.K_RIGHT]:
-#                 position_x += speed
-#                 move_sound.play(maxtime=50)
-#             if keyboard[pg.K_LEFT]:
-#                 position_x -= speed
-#                 move_sound.play(maxtime=50)
-           
-#         rect = current_image.get_rect(center=(position_x, position_y))
-
-#         if position_x - half_width < 0:
-#             position_x = half_width
-#         if position_x + half_width > width:
-#             position_x = width - half_width
-
-#         screen.blit(load_bg3_image, (0, 0))
-#         screen.blit(current_image, rect)
-#         screen.blit(title, (250, 50))
-#         screen.blit(pontuation_2, (950, 350))
-#         screen.blit(count_2, (950, 300))
-
-#         if paused:
-#             screen.blit(paused_game, (360, 300))
-#             screen.blit(continue_game, (300, 10))
-
-#         screen.blit(time_text, (10, 40))   
-#         screen.blit(start, (10, 10))
-#         screen.blit(pause, (90, 10))
-#         screen.blit(finish, (190, 10))
-#         screen.blit(shots_text, (10, 75))
-
-#         if not paused and started:
-#             if tick:
-#                 # for _ in range(3):
-#                 #     balls.append(BallGame(screen, colors['RosaClaro'], (width, random.randint(0, height-350)), 8))
-#                 #     ball_game_count += 1
-#                 current_level.spawn_balls(balls, screen, width, height )
-#             time_text = font_score.render(f"Tempo: {time_game_3} ", True, colors['Laranja']) 
-
-#             for ball in balls:
-#                 ball.move_balls(speed_balls)
-#                 ball.draw_balls()
-
-#             for bullet in bullets[:]:
-#                 bullet.move_bullet()
-#                 bullet.draw_bullet()
-
-#                 if bullet.is_off_screen(width, height):
-#                     bullets.remove(bullet)
-
-#             for bullet in bullets[:]:
-#                 for ball in balls[:]:
-#                     if bullet.collide(ball):
-#                         balls.remove(ball)
-#                         count_ball += 1
-#                         bullets.remove(bullet)
-#                         score += 10
-#                         collision_sound.play()
-#                         break
-#     if timer3.tempo == 0:
-#         nivel_atual = 4
-#         historico = True
-#         timer3.tempo = 60
 
     pontuation = font_score.render(f"Pontuação: {score}", True, colors['Laranja'])
     count = font_score.render(f"Acertou: {count_ball} em {ball_game_count}", True, colors['Laranja'])
@@ -458,17 +201,17 @@ while running:
     close_window = font_score.render("F: Fechar o jogo", True, colors['Vermelho'])
     rect = current_image.get_rect(center=(position_x, position_y))
 
-    if not paused and started:
-        pass
-
     if not started:
         screen.blit(bg_imagem, (0, 0))
         screen.blit(title, (250, 50))
         screen.blit(start, (10, 10))
+        screen.blit(finish, (100, 10))
     if current_level and started:
 
         current_level.draw_background(screen)
-        tick = current_level.update()
+        
+        if not paused:
+            tick = current_level.update()
 
         screen.blit(current_image, rect)
         screen.blit(title, (250, 50))
@@ -476,9 +219,9 @@ while running:
         screen.blit(pontuation, (950, 550))
         screen.blit(count, (950, 650))
         screen.blit(start, (10, 10))
+        screen.blit(shots_text, (10, 75))
         screen.blit(pause, (90, 10))
         screen.blit(finish, (190, 10))
-        screen.blit(shots_text, (10, 75))
 
         if paused:
             screen.blit(paused_game, (360, 300))
@@ -489,15 +232,36 @@ while running:
             ball_game_count += current_level.bolas_spawn
 
         for ball in balls:
-            ball.move_balls(speed_balls)
+            
+            if not paused:
+                ball.move_balls(speed_balls)
+
             ball.draw_balls()
 
         for bullet in bullets[:]:
-            bullet.move_bullet()
+            
+            if not paused:
+                bullet.move_bullet()
+                
             bullet.draw_bullet()
 
             if bullet.is_off_screen(width, height):
                 bullets.remove(bullet)
+                
+        if position_x - half_width < 0:
+            position_x = half_width
+
+        if position_x + half_width > width:
+            position_x = width - half_width
+
+        if not paused and started:
+            if keyboard[pg.K_RIGHT]:
+                position_x += speed
+                move_sound.play(maxtime=50)
+
+            if keyboard[pg.K_LEFT]:
+                position_x -= speed
+                move_sound.play(maxtime=50) 
 
         if not paused and started:
             if keyboard[pg.K_RIGHT]:
@@ -508,30 +272,21 @@ while running:
                 position_x -= speed
                 move_sound.play(maxtime=50)
 
-        if not paused and started:
-            if keyboard[pg.K_RIGHT]:
-                position_x += speed
-                move_sound.play(maxtime=50)
+            for bullet in bullets[:]:
+                for ball in balls[:]:
 
-            if keyboard[pg.K_LEFT]:
-                position_x -= speed
-                move_sound.play(maxtime=50)
+                    if bullet.collide(ball):
 
-        for bullet in bullets[:]:
-            for ball in balls[:]:
+                        balls.remove(ball)
+                        bullets.remove(bullet)
 
-                if bullet.collide(ball):
+                        count_ball += 1
+                        score += 10
 
-                    balls.remove(ball)
-                    bullets.remove(bullet)
+                        collision_sound.play()
 
-                    count_ball += 1
-                    score += 10
-
-                    collision_sound.play()
-
-                    break
-        if current_level.timer.tempo == 0:
+                        break
+        if current_level and current_level.timer.tempo == 0:
 
             if count_ball >= (ball_game_count * 0.7):
 
@@ -540,7 +295,7 @@ while running:
             else:
                 historico = True
 # ===============================================================================================================================================
-    if current_level == 4 or historico:
+    if nivel_atual == 4 or historico:
         paused = True
 
         largura_gatinho = gatinho_image_load_size.get_width()
