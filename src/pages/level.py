@@ -1,10 +1,31 @@
-import pygame as pg
+import random
+from src.pages.ball import BallGame
 from src.pages.timer import Timer_game
+from src.color.cores import colors
 
 class Level:
-    def __init__(self, level_number, title, background, tempo_inicial, bolas_por_spawn):
-        self.level_number = level_number
-        self.title = title
+
+    def __init__(self, numero, tempo, bolas_spawn, background):
+        self.numero = numero
+        self.timer = Timer_game(tempo)
+        self.bolas_spawn = bolas_spawn
         self.background = background
-        self.timer = Timer_game(tempo_inicial)
-        self.bolas_por_spawn = bolas_por_spawn
+
+    def update(self):
+        return self.timer.update()
+
+    def draw_background(self, screen):
+        screen.blit(self.background, (0, 0))
+
+    def spawn_balls(self, balls, screen, width, height):
+        
+        for _ in range(self.bolas_spawn):
+
+            balls.append(
+                BallGame(
+                    screen,
+                    colors['RosaClaro'],
+                    (width, random.randint(0, height - 350)),
+                    8
+                )
+            )
