@@ -185,7 +185,7 @@ while running:
     if not started:
         screen.blit(bg_imagem, (0, 0))
         screen_game.draw_title(current_level.numero, alpha)
-        screen_game.draw_menu()
+        screen_game.draw_menu(paused)
 
     if current_level and started:
 
@@ -196,7 +196,7 @@ while running:
 
         screen.blit(current_image, rect)
         screen_game.draw_title(current_level.numero, alpha)
-        screen_game.draw_menu()
+        screen_game.draw_menu(paused)
         screen_game.draw_score(score)
         screen_game.draw_hits(count_ball, ball_game_count)
         screen_game.draw_shots(bullet_move_count)
@@ -292,10 +292,9 @@ while running:
         if show_return:
             screen_game.draw_return()
 
-        screen_game.draw_lose()
-
         if count_ball >= (ball_game_count * 0.7):
             screen.blit(gatinho_image_load_size, (gatinho_x, gatinho_y))
+            screen_game.draw_win()
 
             if current_image_gatinho - last_time_gatinho > 500:
                 gatinho_x += vel_x

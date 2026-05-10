@@ -19,7 +19,7 @@ class ScreenGame:
         title.set_alpha(alpha)
         self.screen.blit(title, (250, 50))
 
-    def draw_menu(self):
+    def draw_menu(self, paused):
 
         start = self.font_menu.render("I: Iniciar",True,colors['Verde'])
         pause = self.font_menu.render("P: Pausar",True,colors['Amarelo'])
@@ -29,7 +29,9 @@ class ScreenGame:
         self.screen.blit(start, (10, 10))
         self.screen.blit(pause, (90, 10))
         self.screen.blit(finish, (190, 10))
-        self.screen.blit(continue_game, (300, 10))
+        
+        if paused:
+            self.screen.blit(continue_game, (300, 10))
 
 
     def draw_score(self, score):
