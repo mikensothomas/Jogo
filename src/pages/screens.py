@@ -11,7 +11,6 @@ class ScreenGame:
         self.font_title = pg.font.SysFont("Arial", 60)
         self.font_menu = pg.font.SysFont("Arial", 25)
         self.font_score = pg.font.SysFont("Arial", 30)
-        self.font = pg.font.SysFont("Arial", 30)
 
     def draw_title(self, nivel, alpha):
 
@@ -88,5 +87,5 @@ class ScreenGame:
         self.screen.blit(close_window, (220, 10))
     
     def draw_player_name(self, name):
-        text = self.font.render(f"Nome: {name}", True, colors['Laranja'])
+        text = self.font_score.render(f"Nome: {name}", True, colors['Laranja'])
         self.screen.blit(text, (360, 300))

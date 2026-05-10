@@ -239,15 +239,6 @@ while running:
 
             if keyboard[pg.K_LEFT]:
                 position_x -= speed
-                move_sound.play(maxtime=50) 
-
-        if not paused and started:
-            if keyboard[pg.K_RIGHT]:
-                position_x += speed
-                move_sound.play(maxtime=50)
-
-            if keyboard[pg.K_LEFT]:
-                position_x -= speed
                 move_sound.play(maxtime=50)
 
             for bullet in bullets[:]:
@@ -262,7 +253,6 @@ while running:
                         score += 10
 
                         collision_sound.play()
-
                         break
         if current_level and current_level.timer.tempo == 0:
 
