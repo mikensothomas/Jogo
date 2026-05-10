@@ -22,7 +22,6 @@ from src.settings.setting import (
     vel_x,
     vel_y
 )
-from src.pages.ball import BallGame
 from src.pages.bullet import BulletGame
 from src.pages.timer import Timer_game
 from src.pages.name import PlayerName
