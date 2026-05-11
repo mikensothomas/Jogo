@@ -89,7 +89,6 @@ started = False
 finished = False
 continueGame = False
 end_game = False
-show_return = False
 bullet_move_count = 0
 historico = False
 nivel_atual = 1
@@ -147,7 +146,6 @@ while running:
                 if event.key == pg.K_SPACE:
 
                     gun_tip_offset_1 = (-20, 20)
-                    gun_tip_offset_2 = (-10, -70)
 
                     offset_x, offset_y = gun_tip_offset_1
                     rad = math.radians(angle)
@@ -272,24 +270,21 @@ while running:
         pngtree_largura_gatinho = gatinho_image_load_size_pngtree.get_width()
         pngtree_altura_gatinho = gatinho_image_load_size_pngtree.get_height()
 
-        current_image_gatinho = pg.time.get_ticks()
+        current_image_gatinho_time = pg.time.get_ticks()
         screen.blit(bg_imagem, (0, 0))
 
         screen_game.draw_player_name(get_player_name)
         screen_game.draw_historic(get_player_name, score, count_ball, ball_game_count)
 
-        if show_return:
-            screen_game.draw_return()
-
         if count_ball >= (ball_game_count * 0.7):
             screen.blit(gatinho_image_load_size, (gatinho_x, gatinho_y))
             screen_game.draw_win()
 
-            if current_image_gatinho - last_time_gatinho > 500:
+            if current_image_gatinho_time - last_time_gatinho > 500:
                 gatinho_x += vel_x
                 gatinho_y += vel_y
 
-                last_time_gatinho = current_image_gatinho
+                last_time_gatinho = current_image_gatinho_time
 
                 if gatinho_x <= 0:
                     gatinho_x = 0
@@ -311,11 +306,11 @@ while running:
             screen_game.draw_lose()
             screen.blit(gatinho_image_load_size_pngtree, (gatinho_x, gatinho_y))
 
-            if current_image_gatinho - last_time_gatinho > 500:
+            if current_image_gatinho_time - last_time_gatinho > 500:
                 gatinho_x += vel_x
                 gatinho_y += vel_y
 
-                last_time_gatinho = current_image_gatinho
+                last_time_gatinho = current_image_gatinho_time
 
                 if gatinho_x <= 0:
                     gatinho_x = 0
